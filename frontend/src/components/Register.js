@@ -6,11 +6,14 @@ import { Link, useNavigate } from 'react-router-dom';
 const Register = () => {
   const [form, setForm] = useState({
     name: "",
-    mobile: "",
+    phone: "",
     address: "",
+    city: "",
+    state: "",
+    country: "",
     email: "",
     password: "",
-    role: "",
+    role: "guest",
   });
 const [error, setError] = useState('');
 const navigate = useNavigate()
@@ -26,7 +29,7 @@ const navigate = useNavigate()
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/register', form);
+      const response = await axios.post('http://localhost:3001/registration', form);
 
       if (response.status === 201) {
         const data = response.data;
@@ -63,14 +66,14 @@ const navigate = useNavigate()
           />
         </div>
         <div>
-          <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">Mobile</label>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">phone</label>
           <input
-            id="mobile"
-            name="mobile"
+            id="phone"
+            name="phone"
             type="text"
             required
             className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.mobile}
+            value={form.phone}
             onChange={handleChange}
           />
         </div>
@@ -83,6 +86,48 @@ const navigate = useNavigate()
             required
             className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
             value={form.address}
+            onChange={handleChange}
+          />
+          <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
+          <input
+            id="city"
+            name="city"
+            type="text"
+            required
+            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
+            value={form.city}
+            onChange={handleChange}
+          />
+          <label htmlFor="state" className="block text-sm font-medium text-gray-700">State</label>
+          <input
+            id="state"
+            name="state"
+            type="text"
+            required
+            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
+            value={form.state}
+            onChange={handleChange}
+          />
+          <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country</label>
+          <input
+            id="country"
+            name="country"
+            type="text"
+            required
+            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
+            value={form.country}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">Date Of Birth</label>
+          <input
+            id="dateOfBirth"
+            name="dateOfBirth"
+            type="date"
+            required
+            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
+            value={form.dateOfBirth}
             onChange={handleChange}
           />
         </div>
@@ -109,21 +154,6 @@ const navigate = useNavigate()
             value={form.password}
             onChange={handleChange}
           />
-        </div>
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
-          <select
-            id="role"
-            name="role"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.role}
-            onChange={handleChange}
-          >
-            <option value="">Select Role</option>
-            <option value="farmer">Farmer</option>
-            <option value="merchant">Merchant</option>
-          </select>
         </div>
         <div>
           <button

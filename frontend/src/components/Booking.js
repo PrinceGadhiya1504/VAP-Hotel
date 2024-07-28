@@ -1,9 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Booking = () => {
 
+  const navigate = useNavigate()
   const userId = localStorage.getItem('userId')
   const { id } = useParams();
   const [room, setRoom] = useState(null);
@@ -72,6 +73,7 @@ const Booking = () => {
     axios.post('http://localhost:3001/booking', { formData, totalPrice })
     .then(response => {
         console.log('Response:', response.data);
+        navigate('/rooms')
     })
     .catch(error => {
         console.error('Error:', error);
