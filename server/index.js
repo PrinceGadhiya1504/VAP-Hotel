@@ -266,6 +266,40 @@ app.delete('/room/:id', auth, async(req, res) => {
     }
 })
 
+// AvailableRoom Rooms 
+app.post('/availableRoom', async (req, res) => {
+    const { checkInDate, checkOutDate } = req.body.formData;
+  
+    try {
+      // Convert dates to JavaScript Date objects
+      const checkIn = new Date(checkInDate);
+      const checkOut = new Date(checkOutDate);
+  
+      // Find all bookings that overlap with the provided dates
+      const bookings = await Booking.find({
+        $or: [
+          {
+            checkInDate: { $lt: checkOut },
+            checkOutDate: { $gt: checkIn }
+          }
+        ]
+      }).select('roomId');
+  
+      // Extract room IDs that are already booked
+      const bookedRoomIds = bookings.map(booking => booking.roomId);
+  
+      // Find all rooms that are not booked during the specified period
+      const availableRooms = await Room.find({
+        _id: { $nin: bookedRoomIds },
+        // status: 'available'
+      });
+  
+      res.status(200).json(availableRooms);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
 // Booking Room
 app.post('/booking', async(req, res) => {
     try{
@@ -289,8 +323,8 @@ app.post('/booking', async(req, res) => {
         const newBooking = await Booking.create({
             userId,
             roomId,
-            checkInDate: new Date(checkInDate),
-            checkOutDate: new Date(checkOutDate),
+            checkInDate,
+            checkOutDate,
             status: 'pending',
             totalPrice,
             specialRequests,
@@ -308,7 +342,7 @@ app.post('/booking', async(req, res) => {
     }
 })
 
-// Get All Booking Rooms
+// Get All Booking Rooms 
 app.get('/bookings', auth, async(req, res) => {
     try {
         const allbokings = await Booking.find().populate('userId').populate('roomId');

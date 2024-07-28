@@ -24,9 +24,14 @@ const Login = () => {
             localStorage.setItem('userId', user._id);
             console.log(user._id);
             alert('Login successful!');
-            navigate('/rooms'); // Redirect to home page
+            console.log(user.role);
+            if(user.role === 'guest'){
+              navigate('/'); // Redirect to home page
+            } else {
+              navigate('/admin'); // Redirect to Admin page
+            }
           } else {
-            navigate('/register'); // Redirect to register page if login fails
+            navigate('/admin'); // Redirect to register page if login fails
           }
         } catch (error) {
           if (error.response) {
