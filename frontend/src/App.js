@@ -15,6 +15,7 @@ import AvailableRoom from './components/User/AvailableRoom';
 import AdminHome from './components/Admin/Home';
 import AdminRooms from './components/Admin/Rooms';
 import AdminAddRoom from './components/Admin/AddRoom';
+import AdminUpdateRoom from './components/Admin/UpdateRoom';
 import AdminBookings from './components/Admin/Bookings';
 import AdminUsers from './components/Admin/Users';
 import AdminPayments from './components/Admin/Payments';
@@ -39,6 +40,7 @@ function App() {
           <Route index element={<AdminHome />} />
           <Route path="/admin/rooms" element={<AdminRooms />} />
           <Route path="/admin/addRoom" element={<AdminAddRoom />} />
+          <Route path="/admin/editRoom/:id" element={<AdminUpdateRoom />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/payments" element={<AdminPayments />} />

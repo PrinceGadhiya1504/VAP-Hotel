@@ -188,9 +188,10 @@ app.delete('/user/:id', auth, async(req, res) => {
 })
 
 // Add new Room
-app.post('/room',auth, async(req, res) => {
+app.post('/room', async(req, res) => {
     try {
         const { roomNumber, type, price, description, status, facility } = req.body
+
         if(!(roomNumber && type && price && description && facility)){
             res.status(400).send("All fields are Require")
         }
@@ -226,6 +227,7 @@ app.get('/rooms', async(req, res) => {
 
 // Get Single Rooms
 app.get('/room/:id',  async(req, res) => {
+    // console.log(req.params.id);
     try {
         const room = await Room.findById(req.params.id)
         res.status(200).json(room)
@@ -234,11 +236,10 @@ app.get('/room/:id',  async(req, res) => {
     }
 })
 
-// Update Room
-app.put('/room/:id', auth, async(req, res) => {
+// Update Room 
+app.put('/room/:id', async(req, res) => {
     const roomId = req.params.id
     try {
-        // const {roomNumber, type, price, description, status} = req.body
         const updateRoom = await Room.findByIdAndUpdate(
             roomId,
             req.body,
@@ -249,12 +250,12 @@ app.put('/room/:id', auth, async(req, res) => {
         }
         res.status(200).send(updateRoom)
     } catch (error) {
-        res.status(500).send(error)
+        res.status(500).send(error)  
     }
 })
 
 // Delete Room
-app.delete('/room/:id', auth, async(req, res) => {
+app.delete('/room/:id', async(req, res) => {
     try {
         const deleteRoom = await Room.findByIdAndDelete(req.params.id)
         if(!deleteRoom){

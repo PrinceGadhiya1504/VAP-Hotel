@@ -10,10 +10,27 @@ const Rooms = () => {
   useEffect(() => {
     axios.get('http://localhost:3001/rooms')
       .then(response => {
-        console.log(response.data);
+        // console.log(response.data);
         setRooms(response.data)
       })
   }, [])
+
+  const deleteRoom = async (id) => {
+    const confirmed = window.confirm('Are you sure you want to delete this room?');
+    if (!confirmed) {
+      return;
+    }
+    try {
+      const response = await axios.delete(`http://localhost:3001/room/${id}`);
+      if (response.status === 200) {
+        setRooms(rooms.filter(room => room._id !== id));
+      } else {
+        console.error('Failed to delete the room');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div>
@@ -62,8 +79,8 @@ const Rooms = () => {
                   <td>{room.facility}</td>
                   <td>{room.description}</td>
                   <td>
-                    <button className='editButton'>Edit</button>
-                    <button className='deleteButton'>Delete</button>
+                    <Link to={`/admin/editRoom/${room._id}`}><button className='editButton'>Edit</button></Link>
+                    <button onClick={() => deleteRoom(room._id)} className='deleteButton'>Delete</button>
                   </td>
                 </tr>
               ))
