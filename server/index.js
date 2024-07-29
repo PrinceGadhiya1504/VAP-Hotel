@@ -344,7 +344,7 @@ app.post('/booking', async(req, res) => {
 })
 
 // Get All Booking Rooms 
-app.get('/bookings', auth, async(req, res) => {
+app.get('/bookings', async(req, res) => {
     try {
         const allbokings = await Booking.find().populate('userId').populate('roomId');
       res.status(200).json(allbokings);
@@ -354,7 +354,7 @@ app.get('/bookings', auth, async(req, res) => {
 })
 
 // Get Single Booking Room
-app.get('/booking/:id', auth, async(req, res) => {
+app.get('/booking/:id', async(req, res) => {
     try {
         const booking = await Booking.findById(req.params.id).populate('userId').populate('roomId')
         res.status(200).send(booking)
@@ -364,7 +364,7 @@ app.get('/booking/:id', auth, async(req, res) => {
 })
 
 // Update Booking 
-app.put('/booking/:id', auth, async(req, res) => {
+app.put('/booking/:id', async(req, res) => {
     try {
         const {status} = req.body
         const updateBooking = await Booking.findByIdAndUpdate(
@@ -387,7 +387,7 @@ app.put('/booking/:id', auth, async(req, res) => {
 })
 
 // Delete Booking
-app.delete('/booking/:id', auth, async(req, res) => {
+app.delete('/booking/:id', async(req, res) => {
     try {
         const deletedBooking = await Booking.findOneAndDelete(req.params.id)
         if (!deletedBooking) {
