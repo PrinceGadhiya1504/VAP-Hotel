@@ -4,10 +4,11 @@ const cors = require('cors');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const auth = require('./middleware/auth')
+const auth = require('./middleware/auth');
 const User = require('./model/User');
+const RoomCategory = require('./model/RoomCategory');
 const Room = require('./model/Room');
-const Booking = require('./model/Booking');
+const Booking = require('./model/Booking')
 
 const corsOptions = {
     origin: 'http://localhost:3000', // Allow only this origin
@@ -19,7 +20,7 @@ app.use(express.json())
 app.use(cookieParser());
 app.use(cors(corsOptions))
 
-mongoose.connect("mongodb://localhost:27017/VAP_Hotel")
+mongoose.connect("mongodb+srv://PrinceGadhiya:123@merndb.eyezfe8.mongodb.net/VAP-Hotel")
 
 // Registration 
 app.post('/registration', async(req, res) => {
@@ -164,6 +165,7 @@ app.put('/user/:id', auth, async(req, res) => {
             { name, phone, address, city, state, country, dateOfBirth, email, password: myEncPassword, role },
             { new: true }
         )
+
         if(!updateUser){
           return res.status(404).send('User not found')
         }
@@ -187,49 +189,136 @@ app.delete('/user/:id', auth, async(req, res) => {
     }
 })
 
-// Add new Room
-app.post('/room', async(req, res) => {
+// Add new Category
+app.post('/roomCategory',auth, async(req, res) => {
     try {
-        const { roomNumber, type, price, description, status, facility } = req.body
+        const { name, price, maxPerson, facilities, description } = req.body
 
-        if(!(roomNumber && type && price && description && facility)){
+        if(!(name && price && maxPerson && facilities && description)){
             res.status(400).send("All fields are Require")
         }
         // check Room already exitst - roomNumber
-        const existingRoom = await User.findOne({roomNumber})
+        const existingRoom = await RoomCategory.findOne({name})
         if(existingRoom){
-            return res.status(401).send(`Room already exists with ${roomNumber} roomNumber`);
+            return res.status(401).send(`Room already exists with ${name} Name`);
         }
-        const newRoom = await Room.create({
-            roomNumber, 
-            type, 
+        const newCategory = await RoomCategory.create({
+            name, 
             price, 
-            description, 
-            status, 
-            facility
+            maxPerson, 
+            facilities, 
+            description
         })
-        res.status(201).send(newRoom)
+        res.status(201).send(newCategory)
 
     } catch (error) {
         res.status(500).send(error)
     }
 })
 
+// Get All Category
+app.get('/roomCategory', auth, async(req, res) => {
+    try {
+        const category = await RoomCategory.find()
+        res.status(200).json(category)
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error");
+    }
+})
+
+// Get Single Category By Id
+app.get('/roomCategory/:id', auth, async(req, res) => {
+    const categoryId = req.params.id
+    try {
+        const category = await RoomCategory.findById(categoryId)
+        if(!category){
+            return res.status(404).send('Category not found')
+        }
+        res.status(200).json(category)
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error");
+    }
+})
+
+// Update Category
+app.put('/roomCategory/:id', auth, async(req, res) => {
+    const categoryId = req.params.id
+    const { name, price, maxPerson, facilities, description } = req.body
+    try {
+        const updateCategory = await RoomCategory.findByIdAndUpdate(
+            categoryId,
+            { name, price, maxPerson, facilities, description },
+            { new: true }
+        )
+
+        if(!updateCategory){
+          return res.status(404).send('Category not found')
+        }
+        res.status(200).json(updateCategory)
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error)
+    }
+})
+
+// Delete Category
+app.delete('/roomCategory/:id', auth, async(req, res) => {
+    try {
+        const deleteCategory = await RoomCategory.findByIdAndDelete(req.params.id)
+        if(!deleteCategory){
+            res.status(404).send('Category not found')
+        }
+        res.status(200).send('Category delete Successfully')
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+
+// Add new Room
+app.post('/room',auth, async(req, res) => {
+    try {
+        const { roomNumber, roomCategoryId, status } = req.body
+
+        if(!(roomNumber && roomCategoryId )){
+            res.status(400).send("All fields are Require")
+        }
+        // check Room already exitst - roomNumber
+        const existingRoom = await Room.findOne({roomNumber})
+        if(existingRoom){
+            return res.status(401).send(`Room already exists with ${roomNumber} roomNumber`);
+        }
+        const newRoom = await Room.create({
+            roomNumber, 
+            roomCategoryId,
+            status, 
+        })
+        res.status(201).send(newRoom) 
+
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
+})
+
 // Get All Rooms
-app.get('/rooms', async(req, res) => {
+app.get('/rooms',auth, async(req, res) => {
     try {
         const allRooms = await Room.find()
         res.status(200).json(allRooms)
     } catch (error) {
         res.status(500).send(error)
     }
-})
+}) 
 
 // Get Single Rooms
 app.get('/room/:id',  async(req, res) => {
     // console.log(req.params.id);
     try {
         const room = await Room.findById(req.params.id)
+        if(!room){
+            return res.status(404).send('Room not found')
+        }
         res.status(200).json(room)
     } catch (error) {
         res.status(500).send(error)
@@ -299,14 +388,15 @@ app.post('/availableRoom', async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  });
+});
+
 
 // Booking Room
 app.post('/booking', async(req, res) => {
     try{
 
-        const { userId, roomId, checkInDate, checkOutDate, specialRequests, numberOfGuests } = req.body.formData
-        const totalPrice = req.body.totalPrice
+        const { userId, roomId, checkInDate, checkOutDate, specialRequests, numberOfGuests, totalPrice } = req.body
+        // const totalPrice = req.body.totalPrice
 
         // console.log( userId, roomId, checkInDate, checkOutDate, specialRequests, numberOfGuests );
         // console.log( totalPrice );
@@ -326,7 +416,7 @@ app.post('/booking', async(req, res) => {
             roomId,
             checkInDate,
             checkOutDate,
-            status: 'pending',
+            status: 'pending', 
             totalPrice,
             specialRequests,
             numberOfGuests
@@ -357,6 +447,9 @@ app.get('/bookings', async(req, res) => {
 app.get('/booking/:id', async(req, res) => {
     try {
         const booking = await Booking.findById(req.params.id).populate('userId').populate('roomId')
+        if(!booking){
+            return res.status(404).send('Booking not found')
+        }
         res.status(200).send(booking)
     } catch (error) {
         res.status(500).json(error.message)
@@ -369,7 +462,7 @@ app.put('/booking/:id', async(req, res) => {
         const {status} = req.body
         const updateBooking = await Booking.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            req.body, 
             {new: true}
         )
         if(!updateBooking){
@@ -389,7 +482,9 @@ app.put('/booking/:id', async(req, res) => {
 // Delete Booking
 app.delete('/booking/:id', async(req, res) => {
     try {
-        const deletedBooking = await Booking.findOneAndDelete(req.params.id)
+
+        const deletedBooking = await Booking.findByIdAndDelete(req.params.id)
+
         if (!deletedBooking) {
             return res.status(404).send('Booking not found');
         }
@@ -405,7 +500,7 @@ app.delete('/booking/:id', async(req, res) => {
     }
 })
 
+
 app.listen(3001, () => {
     console.log('Server is Running....');
 })
-
