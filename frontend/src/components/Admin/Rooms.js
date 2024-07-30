@@ -10,7 +10,7 @@ const Rooms = () => {
   useEffect(() => {
     axios.get('http://localhost:3001/rooms')
       .then(response => {
-        // console.log(response.data);
+        console.log(response.data);
         setRooms(response.data)
       })
   }, [])
@@ -57,28 +57,28 @@ const Rooms = () => {
         <table width="100%">
           <thead>
             <tr>
-              <th>#</th>
-              <th> Room Number </th>
-              <th> Status </th>
-              <th> Type </th>
-              <th> Price </th>
-              <th> Facility </th>
-              <th> Description </th>
-              <th> Action </th>
+              <th style={{ width: '5%' }}>#</th>
+              <th style={{ width: '5%' }}> Room Number </th>
+              <th style={{ width: '5%' }}> Status </th>
+              <th style={{ width: '5%' }}> Type </th>
+              {/* <th style={{ width: '5%' }}> Price </th>
+              <th style={{ width: '5%' }}> Facility </th>
+              <th style={{ width: '5%' }}> Description </th> */}
+              <th style={{ width: '5%' }}> Action </th>
             </tr>
           </thead>
           <tbody>
             {
               rooms.map((room, index) => (
                 <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{room.roomNumber}</td>
-                  <td>{room.status}</td>
-                  <td>{room.type}</td>
-                  <td>{room.price}</td>
-                  <td>{room.facility}</td>
-                  <td>{room.description}</td>
-                  <td>
+                  <td style={{ width: '5%' }}>{index + 1}</td>
+                  <td style={{ width: '5%' }}>{room.roomNumber}</td>
+                  <td style={{ width: '5%' }}>{room.status}</td>
+                  <td style={{ width: '5%' }}>{room.roomCategoryId.name}</td>
+                  {/* <td style={{ width: '5%' }}>{room.roomCategoryId.price}</td>
+                  <td style={{ width: '5%' }}>{room.roomCategoryId.facilities}</td>
+                  <td style={{ width: '5%' }}>{room.roomCategoryId.description}</td> */}
+                  <td style={{ width: '5%' }}>
                     <Link to={`/admin/editRoom/${room._id}`}><button className='editButton'>Edit</button></Link>
                     <button onClick={() => deleteRoom(room._id)} className='deleteButton'>Delete</button>
                   </td>

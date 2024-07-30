@@ -3,33 +3,39 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateRoom = () => {
-
   const [formData, setFormData] = useState({
     roomNumber: '',
     type: '',
-    price: '',
-    description: '',
-    status: 'available',
-    facility: ''
+    status: 'available'
   });
 
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
-
-  const {id} = useParams()
+  const { id } = useParams();
 
   useEffect(() => {
     axios.get(`http://localhost:3001/room/${id}`)
-    .then((res) => {
-      setFormData(res.data)
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  },[])
-  
-  // console.log(data);
-  console.log(formData);
+      .then((res) => {
+        setFormData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id]);
 
+  useEffect(() => {
+    // Fetch categories from the backend
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/roomCategory');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -41,15 +47,15 @@ const UpdateRoom = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:3001/room/${id}`, formData)
-      if(response.status === 200){
+      const response = await axios.put(`http://localhost:3001/room/${id}`, formData);
+      if (response.status === 200) {
         console.log(response.data);
-        navigate('/admin/rooms')
+        navigate('/admin/rooms');
       } else {
-        console.log("error");
+        console.log("Error");
       }
     } catch (error) {
-      console.log(error);      
+      console.log(error);
     }
   };
 
@@ -81,56 +87,15 @@ const UpdateRoom = () => {
                 value={formData.type}
                 onChange={handleChange}
               >
-                  <option>Choose...</option>
-                  <option value="single">Single</option>
-                  <option value="double">Double</option>
+                <option>Choose...</option>
+                {categories.map((category) => (
+                  <option key={category._id} value={category._id}>
+                    {category.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
-          <div className="form-group">
-            <label htmlFor="price">Price</label>
-            <input
-              type="number"
-              className="form-control"
-              id="price"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              className="form-control"
-              value={formData.description}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="facility">Facility</label>
-            <input
-              type="text"
-              className="form-control"
-              id="facility"
-              name="facility"
-              value={formData.facility}
-              onChange={handleChange}
-              autoComplete='off'
-            />
-          </div>
-          {/* <div className="form-group">
-            <label htmlFor="status">Status</label>
-            <input
-              type="text"
-              className="form-control"
-              id="status" 
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-            />
-          </div> */}
           <button type="submit" className="submit-btn">Update Room</button>
         </form>
       </div>
@@ -138,4 +103,4 @@ const UpdateRoom = () => {
   );
 }
 
-export default UpdateRoom
+export default UpdateRoom;

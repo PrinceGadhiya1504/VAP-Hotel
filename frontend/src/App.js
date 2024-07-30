@@ -13,12 +13,16 @@ import AvailableRoom from './components/User/AvailableRoom';
 
 //Admin 
 import AdminHome from './components/Admin/Home';
+import RoomCategory from './components/Admin/RoomCategory';
+import AddCategory from './components/Admin/AddCategory';
+import UpdateRoomCategory from './components/Admin/UpdateRoomCategory';
 import AdminRooms from './components/Admin/Rooms';
 import AdminAddRoom from './components/Admin/AddRoom';
 import AdminUpdateRoom from './components/Admin/UpdateRoom';
 import AdminBookings from './components/Admin/Bookings';
 import AdminUpdateBooking from './components/Admin/UpdateBooking';
 import AdminUsers from './components/Admin/Users';
+import UpdateUser from './components/Admin/UpdateUser';
 import AdminPayments from './components/Admin/Payments';
 import AdminGallery from './components/Admin/Gallery';
 
@@ -39,12 +43,16 @@ function App() {
         {/* Admin Side Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminHome />} />
+          <Route path="/admin/category" element={<RoomCategory />} />
+          <Route path="/admin/addCategory" element={<AddCategory />} />
+          <Route path="/admin/editcategory/:id" element={<UpdateRoomCategory />} />
           <Route path="/admin/rooms" element={<AdminRooms />} />
           <Route path="/admin/addRoom" element={<AdminAddRoom />} />
           <Route path="/admin/editRoom/:id" element={<AdminUpdateRoom />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
-          <Route path="/admin/editBooking/:id     " element={<AdminUpdateBooking />} />
+          <Route path="/admin/editBooking/:id" element={<AdminUpdateBooking />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/editUser/:id" element={<UpdateUser />} />
           <Route path="/admin/payments" element={<AdminPayments />} />
           <Route path="/admin/gallery" element={<AdminGallery />} />
         </Route>

@@ -203,7 +203,7 @@ app.post('/roomCategory', async(req, res) => {
             return res.status(401).send(`Room already exists with ${name} Name`);
         }
         const newCategory = await RoomCategory.create({
-            name, 
+            name,   
             price, 
             maxPerson, 
             facilities, 
@@ -243,7 +243,7 @@ app.get('/roomCategory/:id',  async(req, res) => {
 })
 
 // Update Category
-app.put('/roomCategory/:id',  async(req, res) => {
+app.put('/roomCategory/:id',  async(req, res) => { 
     const categoryId = req.params.id
     const { name, price, maxPerson, facilities, description } = req.body
     try {
@@ -315,7 +315,8 @@ app.get('/rooms', async(req, res) => {
 app.get('/room/:id',  async(req, res) => {
     // console.log(req.params.id);
     try {
-        const room = await Room.findById(req.params.id)
+        const room = await Room.findById(req.params.id).populate('roomCategoryId')
+        // console.log(room);
         if(!room){
             return res.status(404).send('Room not found')
         }
@@ -328,6 +329,7 @@ app.get('/room/:id',  async(req, res) => {
 // Update Room 
 app.put('/room/:id', async(req, res) => {
     const roomId = req.params.id
+    const type = req.body.type
     try {
         const updateRoom = await Room.findByIdAndUpdate(
             roomId,
@@ -338,11 +340,12 @@ app.put('/room/:id', async(req, res) => {
             res.status(404).send('Room Not Found')
         }
         res.status(200).send(updateRoom)
+        console.log(updateRoom);
     } catch (error) {
         res.status(500).send(error)  
     }
 })
-
+ 
 // Delete Room
 app.delete('/room/:id', async(req, res) => {
     try {

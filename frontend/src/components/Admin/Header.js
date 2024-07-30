@@ -1,6 +1,6 @@
 import React from 'react'
 import imgSrc from './assert/img/1.jpeg'; // Adjust the path based on your file structure
-// import './assert/style.css'
+import './assert/style.css'
 
 import { Link, Outlet } from 'react-router-dom';
 
@@ -29,6 +29,12 @@ const Header = () => {
                             <small>Dashboard</small>
                         </Link>
                     </li> */}
+              <li>
+                <Link to="/admin/category">
+                  <span className="las la-user-alt"></span>
+                  <small>Category</small>
+                </Link>
+              </li>
               <li>
                 <Link to="/admin/rooms">
                   <span className="las la-user-alt"></span>
