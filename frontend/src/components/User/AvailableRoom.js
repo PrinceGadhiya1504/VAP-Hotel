@@ -91,10 +91,10 @@ const AvailableRoom = () => {
                 {availableRooms.map((room, index) => (
                   <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
                     <td className="py-3 px-6 text-left whitespace-nowrap">{room.roomNumber}</td>
-                    <td className="py-3 px-6 text-left">{room.type}</td>
-                    <td className="py-3 px-6 text-left">{room.price}</td>
-                    <td className="py-3 px-6 text-left">{room.description}</td>
-                    <td className="py-3 px-6 text-left">{room.facility}</td>
+                    <td className="py-3 px-6 text-left">{room.roomCategoryId.name}</td>
+                    <td className="py-3 px-6 text-left">{room.roomCategoryId.price}</td>
+                    <td className="py-3 px-6 text-left">{room.roomCategoryId.description}</td>
+                    <td className="py-3 px-6 text-left">{room.roomCategoryId.facilities}</td>
                     <td className="py-3 px-6 text-center">
                       <button
                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"

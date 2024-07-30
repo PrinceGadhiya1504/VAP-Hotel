@@ -130,7 +130,7 @@ app.post('/login', async(req, res) => {
 })
 
 // Get All Users
-app.get('/users', auth, async(req, res) => {
+app.get('/users',  async(req, res) => {
     try {
         const users = await User.find()
         res.status(200).json(users)
@@ -141,7 +141,7 @@ app.get('/users', auth, async(req, res) => {
 })
 
 // Get Single User By Id
-app.get('/user/:id', auth, async(req, res) => {
+app.get('/user/:id',  async(req, res) => {
     const userId = req.params.id
     try {
         const users = await User.findById(userId)
@@ -153,7 +153,7 @@ app.get('/user/:id', auth, async(req, res) => {
 })
 
 // Update User
-app.put('/user/:id', auth, async(req, res) => {
+app.put('/user/:id',  async(req, res) => {
     const userId = req.params.id
     const { name, phone, address, city, state, country, dateOfBirth, email, password, role } = req.body
     try {
@@ -177,7 +177,7 @@ app.put('/user/:id', auth, async(req, res) => {
 })
 
 // Delete User
-app.delete('/user/:id', auth, async(req, res) => {
+app.delete('/user/:id',  async(req, res) => {
     try {
         const deleteUser = await User.findByIdAndDelete(req.params.id)
         if(!deleteUser){
@@ -190,7 +190,7 @@ app.delete('/user/:id', auth, async(req, res) => {
 })
 
 // Add new Category
-app.post('/roomCategory',auth, async(req, res) => {
+app.post('/roomCategory', async(req, res) => {
     try {
         const { name, price, maxPerson, facilities, description } = req.body
 
@@ -217,7 +217,7 @@ app.post('/roomCategory',auth, async(req, res) => {
 })
 
 // Get All Category
-app.get('/roomCategory', auth, async(req, res) => {
+app.get('/roomCategory',  async(req, res) => {
     try {
         const category = await RoomCategory.find()
         res.status(200).json(category)
@@ -228,7 +228,7 @@ app.get('/roomCategory', auth, async(req, res) => {
 })
 
 // Get Single Category By Id
-app.get('/roomCategory/:id', auth, async(req, res) => {
+app.get('/roomCategory/:id',  async(req, res) => {
     const categoryId = req.params.id
     try {
         const category = await RoomCategory.findById(categoryId)
@@ -243,7 +243,7 @@ app.get('/roomCategory/:id', auth, async(req, res) => {
 })
 
 // Update Category
-app.put('/roomCategory/:id', auth, async(req, res) => {
+app.put('/roomCategory/:id',  async(req, res) => {
     const categoryId = req.params.id
     const { name, price, maxPerson, facilities, description } = req.body
     try {
@@ -264,7 +264,7 @@ app.put('/roomCategory/:id', auth, async(req, res) => {
 })
 
 // Delete Category
-app.delete('/roomCategory/:id', auth, async(req, res) => {
+app.delete('/roomCategory/:id',  async(req, res) => {
     try {
         const deleteCategory = await RoomCategory.findByIdAndDelete(req.params.id)
         if(!deleteCategory){
@@ -277,7 +277,7 @@ app.delete('/roomCategory/:id', auth, async(req, res) => {
 })
 
 // Add new Room
-app.post('/room',auth, async(req, res) => {
+app.post('/room', async(req, res) => {
     try {
         const { roomNumber, roomCategoryId, status } = req.body
 
@@ -302,9 +302,9 @@ app.post('/room',auth, async(req, res) => {
 })
 
 // Get All Rooms
-app.get('/rooms',auth, async(req, res) => {
+app.get('/rooms', async(req, res) => {
     try {
-        const allRooms = await Room.find()
+        const allRooms = await Room.find().populate('roomCategoryId', 'name price maxPerson facilities description')
         res.status(200).json(allRooms)
     } catch (error) {
         res.status(500).send(error)
@@ -382,7 +382,7 @@ app.post('/availableRoom', async (req, res) => {
       const availableRooms = await Room.find({
         _id: { $nin: bookedRoomIds },
         // status: 'available'
-      });
+      }).populate('roomCategoryId', 'name price maxPerson facilities description');
   
       res.status(200).json(availableRooms);
     } catch (error) {

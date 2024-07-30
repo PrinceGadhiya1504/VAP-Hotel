@@ -76,12 +76,12 @@ const RoomPage = () => {
                   <img className="w-full" src="https://via.placeholder.com/400" alt="Card Image" />
                   <div className="px-6 py-4">
                     <div className="font-bold  mb-2">Room Number : {room.roomNumber}</div>
-                    <div className="mb-2">Type : {room.type}</div>
-                    <div className="mb-2">Price : {room.price}</div>
+                    <div className="mb-2">Type : {room.roomCategoryId.name}</div>
+                    <div className="mb-2">Price : {room.roomCategoryId.price}</div>
+                    <div className="mb-2">Facility : {room.roomCategoryId.facilities}</div>
                     <p className="text-gray-700 text-base">
-                      {room.description}
+                      {room.roomCategoryId.description}
                     </p>
-                    <div className="mb-2">Facility : {room.facility}</div>
                   </div>
                   {/* <div className="px-6 pt-4 pb-2">
                     <Link to={`/booking/${room._id}`} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Book Now</Link>
