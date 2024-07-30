@@ -43,7 +43,7 @@ function App() {
           <Route path="/admin/addRoom" element={<AdminAddRoom />} />
           <Route path="/admin/editRoom/:id" element={<AdminUpdateRoom />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
-          <Route path="/admin/editBooking/:id" element={<AdminUpdateBooking />} />
+          <Route path="/admin/editBooking/:id     " element={<AdminUpdateBooking />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/payments" element={<AdminPayments />} />
           <Route path="/admin/gallery" element={<AdminGallery />} />

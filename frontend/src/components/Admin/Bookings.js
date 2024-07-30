@@ -43,7 +43,7 @@ const Bookings = () => {
             <select name="" id="">
               <option value="">ID</option>
             </select> */}
-            <Link to="/availableRoom"><button>Add record</button></Link>
+            <Link to="/availableRoom  "><button>Add record</button></Link>
           </div>
 
           <div className="browse">
