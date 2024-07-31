@@ -1,6 +1,6 @@
 import React from 'react'
 import imgSrc from './assert/img/1.jpeg'; // Adjust the path based on your file structure
-import './assert/style.css'
+// import './assert/style.css'
 
 import { Link, Outlet } from 'react-router-dom';
 

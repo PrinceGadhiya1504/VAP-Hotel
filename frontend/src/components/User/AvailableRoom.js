@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AvailableRoom = () => {
   const [availableRooms, setAvailableRooms] = useState([]);
@@ -33,71 +33,68 @@ const AvailableRoom = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Booking Form Section */}
-      <div className="max-w-lg w-full bg-white shadow-lg rounded-lg p-6 mx-auto my-10">
-        <h2 className="text-2xl font-semibold mb-4">Book Your Room</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="checkInDate" className="block text-sm font-medium text-gray-700 mb-1">Check-In Date</label>
-            <input
-              type="date"
-              id="checkInDate"
-              name="checkInDate"
-              value={formData.checkInDate}
-              onChange={handleChange}
-              min={new Date().toISOString().split('T')[0]}
-              className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
+    <div className="container my-5">
+      <div className="row">
+        <div className="col-md-5 mx-auto">
+          <div className="card shadow-lg p-4">
+            <h1 className="card-title">Book a Room</h1>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="checkInDate" className="form-label">Check-In Date</label>
+                <input
+                  type="date"
+                  id="checkInDate"
+                  name="checkInDate"
+                  value={formData.checkInDate}
+                  onChange={handleChange}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="form-control"
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="checkOutDate" className="form-label">Check-Out Date</label>
+                <input
+                  type="date"
+                  id="checkOutDate"
+                  name="checkOutDate"
+                  value={formData.checkOutDate}
+                  onChange={handleChange}
+                  min={formData.checkInDate}
+                  className="form-control"
+                />
+              </div>
+              <button type="submit" className="btn btn-primary w-100">Show Available Rooms</button>
+            </form>
           </div>
-          <div className="mb-4">
-            <label htmlFor="checkOutDate" className="block text-sm font-medium text-gray-700 mb-1">Check-Out Date</label>
-            <input
-              type="date"
-              id="checkOutDate"
-              name="checkOutDate"
-              value={formData.checkOutDate}
-              onChange={handleChange}
-              min={formData.checkInDate}
-              className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Show Available Rooms
-          </button>
-        </form>
+        </div>
       </div>
 
-      {/* Available Rooms Table Section */}
       {availableRooms.length > 0 && (
-        <div className="mt-8">
-          <h3 className="text-2xl font-semibold mb-6 text-gray-800">Available Rooms</h3>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden">
-              <thead>
-                <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                  <th className="py-3 px-6 text-left">Room Number</th>
-                  <th className="py-3 px-6 text-left">Type</th>
-                  <th className="py-3 px-6 text-left">Price</th>
-                  <th className="py-3 px-6 text-left">Description</th>
-                  <th className="py-3 px-6 text-left">Facility</th>
-                  <th className="py-3 px-6 text-center">Action</th>
+        <div className="mt-5">
+          <h3 className="mb-4">Available Rooms</h3>
+          <div className="table-responsive">
+            <table className="table table-bordered table-hover">
+              <thead className="table-light">
+                <tr>
+                  <th>Room Number</th>
+                  <th>Type</th>
+                  <th>Price</th>
+                  <th>Description</th>
+                  <th>Facility</th>
+                  <th>Action</th>
                 </tr>
               </thead>
-              <tbody className="text-gray-600 text-sm font-light">
+              <tbody>
                 {availableRooms.map((room, index) => (
-                  <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{room.roomNumber}</td>
-                    <td className="py-3 px-6 text-left">{room.roomCategoryId.name}</td>
-                    <td className="py-3 px-6 text-left">{room.roomCategoryId.price}</td>
-                    <td className="py-3 px-6 text-left">{room.roomCategoryId.description}</td>
-                    <td className="py-3 px-6 text-left">{room.roomCategoryId.facilities}</td>
-                    <td className="py-3 px-6 text-center">
+                  <tr key={index}>
+                    <td>{room.roomNumber}</td>
+                    <td>{room.roomCategoryId.name}</td>
+                    <td>{room.roomCategoryId.price}</td>
+                    <td>{room.roomCategoryId.description}</td>
+                    <td>{room.roomCategoryId.facilities}</td>
+                    <td className="text-center">
                       <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        className="btn btn-primary"
                         onClick={() => navigate(`/booking/${room._id}`, { state: { checkInDate: formData.checkInDate, checkOutDate: formData.checkOutDate } })}
                       >
                         Book Now

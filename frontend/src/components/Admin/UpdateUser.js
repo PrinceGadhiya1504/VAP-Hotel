@@ -23,12 +23,24 @@ const UpdateUser = () => {
       useEffect(() => {
         axios.get(`http://localhost:3001/user/${id}`)
         .then((res) => {
-          setFormData(res.data)
+            const data = res.data;
+          setFormData({
+            name: data.name,
+            phone: data.phone,
+            address: data.address,
+            city: data.city,
+            state: data.state,
+            country: data.country,
+            dateOfBirth: formDate(new Date(data.dateOfBirth)),
+            email: data.email,
+            password: data.password,
+            role: data.role,
+          })
         })
         .catch((err) => {
           console.log(err);
         })
-      },[])
+      },[id])
       
       // console.log(data);
       console.log(formData);
@@ -55,6 +67,12 @@ const UpdateUser = () => {
         }
       };
 
+      const formDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth()+1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
       
   return (
     <div className="container">

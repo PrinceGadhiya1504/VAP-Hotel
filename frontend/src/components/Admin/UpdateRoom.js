@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const UpdateRoom = () => {
   const [formData, setFormData] = useState({
     roomNumber: '',
-    type: '',
+    roomCategoryId: '',
     status: 'available'
   });
 
@@ -79,12 +79,12 @@ const UpdateRoom = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="type">Room Type</label>
+              <label htmlFor="roomCategoryId">Room Type</label>
               <select
-                id="type"
-                name="type"
+                id="roomCategoryId"
+                name="roomCategoryId"
                 className="form-control"
-                value={formData.type}
+                value={formData.roomCategoryId}
                 onChange={handleChange}
               >
                 <option>Choose...</option>

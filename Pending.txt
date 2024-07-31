@@ -1,2 +1,9 @@
-=> Update Room page in Room Type not Update
-=> Update User in Date Picker Manage & Role
+Admin Side
+-------------------------------
+    => Payment CRUD
+    => Gallery CRUD // Default
+    => Filter Functionality
+
+User Side 
+-------------------------------
+    => All is Left

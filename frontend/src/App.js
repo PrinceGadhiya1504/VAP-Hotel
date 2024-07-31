@@ -10,6 +10,10 @@ import Home from './components/User/Home';
 import RoomPage from './components/User/RoomPage';
 import Booking from './components/User/Booking';
 import AvailableRoom from './components/User/AvailableRoom';
+import About from './components/User/About';
+import Gallery from './components/User/Gallery';
+import Blog from './components/User/Blog';
+import Contact from './components/User/Contact';
 
 //Admin 
 import AdminHome from './components/Admin/Home';
@@ -35,7 +39,11 @@ function App() {
         {/* User Side Routes */}
         <Route path="/" element={<UserLayout />}>
           <Route index element={<Home />} />
+          <Route path="/about" element={<About />} />
           <Route path="/rooms" element={<RoomPage />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/availableRoom" element={<AvailableRoom />} />
           <Route path="/booking/:id" element={<Booking />} />
         </Route>

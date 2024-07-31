@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions))
 
 mongoose.connect("mongodb+srv://PrinceGadhiya:123@merndb.eyezfe8.mongodb.net/VAP-Hotel")
-
+ 
 // Registration 
 app.post('/registration', async(req, res) => {
     try {
@@ -140,7 +140,7 @@ app.get('/users',  async(req, res) => {
     }
 })
 
-// Get Single User By Id
+// Get Single User By Id    
 app.get('/user/:id',  async(req, res) => {
     const userId = req.params.id
     try {
@@ -214,7 +214,7 @@ app.post('/roomCategory', async(req, res) => {
     } catch (error) {
         res.status(500).send(error)
     }
-})
+}) 
 
 // Get All Category
 app.get('/roomCategory',  async(req, res) => {
@@ -276,31 +276,30 @@ app.delete('/roomCategory/:id',  async(req, res) => {
     }
 })
 
-// Add new Room
-app.post('/room', async(req, res) => {
+
+app.post('/room', async (req, res) => {
     try {
-        const { roomNumber, roomCategoryId, status } = req.body
-
-        if(!(roomNumber && roomCategoryId )){
-            res.status(400).send("All fields are Require")
-        }
-        // check Room already exitst - roomNumber
-        const existingRoom = await Room.findOne({roomNumber})
-        if(existingRoom){
-            return res.status(401).send(`Room already exists with ${roomNumber} roomNumber`);
-        }
-        const newRoom = await Room.create({
-            roomNumber, 
-            roomCategoryId,
-            status, 
-        })
-        res.status(201).send(newRoom) 
-
+      const { roomNumber, roomCategoryId, status } = req.body;
+      if (!(roomNumber && roomCategoryId)) {
+        return res.status(400).send("All fields are required");
+      }
+      // Check if the room already exists
+      const existingRoom = await Room.findOne({ roomNumber });
+      if (existingRoom) {
+        return res.status(401).send(`Room already exists with room number ${roomNumber}`);
+      }
+      // Create new room
+      const newRoom = await Room.create({
+        roomNumber,
+        roomCategoryId,
+        status
+      });
+      res.status(201).send(newRoom);
     } catch (error) {
-        res.status(500).send(error.message)
+      res.status(500).send(error.message);
     }
-})
-
+  });
+  
 // Get All Rooms
 app.get('/rooms', async(req, res) => {
     try {
@@ -327,26 +326,26 @@ app.get('/room/:id',  async(req, res) => {
 })
 
 // Update Room 
-app.put('/room/:id', async(req, res) => {
-    const roomId = req.params.id
-    const type = req.body.type
+app.put('/room/:id', async (req, res) => {
+    const roomId = req.params.id;
+    const { roomNumber, roomCategoryId, status } = req.body;
     try {
-        const updateRoom = await Room.findByIdAndUpdate(
-            roomId,
-            req.body,
-            {new: true}
-        )
-        if(!updateRoom){
-            res.status(404).send('Room Not Found')
-        }
-        res.status(200).send(updateRoom)
-        console.log(updateRoom);
+      const updateRoom = await Room.findByIdAndUpdate(
+        roomId,
+        { roomNumber, roomCategoryId, status },
+        { new: true }
+      );
+      if (!updateRoom) {
+        return res.status(404).send('Room Not Found');
+      }
+      res.status(200).send(updateRoom);
+    //console.log(updateRoom);
     } catch (error) {
-        res.status(500).send(error)  
+      res.status(500).send(error);
     }
-})
+  });
  
-// Delete Room
+// Delete Room 
 app.delete('/room/:id', async(req, res) => {
     try {
         const deleteRoom = await Room.findByIdAndDelete(req.params.id)
