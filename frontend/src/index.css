@@ -1028,7 +1028,7 @@ line-height: 35px;
     border: 3px solid #899DC1;
 }
 
-.profile h4 {
+.profile h5 {
     color: #fff;
     font-weight: 500;
 }
@@ -1039,7 +1039,8 @@ line-height: 35px;
 }
 
 .side-menu ul {
-    text-align: center;
+    /* text-align: center; */
+    text-align: left;
 }
 
 .side-menu a {

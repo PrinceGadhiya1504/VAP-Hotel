@@ -8,7 +8,7 @@ const Header = () => {
 
   return (
     <div>
-      <input type="checkbox" id="menu-toggle" />
+      {/* <input type="checkbox" id="menu-toggle" /> */}
       <div className="sidebar">
         <div className="side-header">
           <h3>VAP-Hotel</h3>
@@ -17,8 +17,8 @@ const Header = () => {
         <div className="side-content">
           <div className="profile">
             <div className="profile-img bg-img" style={{ backgroundImage: `url(${imgSrc})` }}></div>
-            <h4>Prince Gadhiya</h4>
-            <small>Admin</small>
+            <h5>Prince Gadhiya</h5>
+            {/* <small>Admin</small> */}
           </div>
 
           <div className="side-menu">
