@@ -151,7 +151,7 @@ app.get('/user/:id',  async(req, res) => {
         return res.status(500).send("Internal Server Error");
     }
 })
-
+ 
 // Update User
 app.put('/user/:id',  async(req, res) => {
     const userId = req.params.id
@@ -175,7 +175,7 @@ app.put('/user/:id',  async(req, res) => {
         res.status(500).json(error)
     }
 })
-
+ 
 // Delete User
 app.delete('/user/:id',  async(req, res) => {
     try {

@@ -33,14 +33,18 @@ const AvailableRoom = () => {
   };
 
   return (
+    <div className="booking_ocline">
+
     <div className="container my-5">
       <div className="row">
         <div className="col-md-5 mx-auto">
-          <div className="card shadow-lg p-4">
+          {/* <div className="card shadow-lg p-4"> */}
+          <div className="book_room">
+
             <h1 className="card-title">Book a Room</h1>
-            <form onSubmit={handleSubmit}>
+            <form className="book_now" onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label htmlFor="checkInDate" className="form-label">Check-In Date</label>
+                <span><label htmlFor="checkInDate" className="form-label">Check-In Date</label></span>
                 <input
                   type="date"
                   id="checkInDate"
@@ -48,11 +52,11 @@ const AvailableRoom = () => {
                   value={formData.checkInDate}
                   onChange={handleChange}
                   min={new Date().toISOString().split('T')[0]}
-                  className="form-control"
+                  className="form-control online_book"
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="checkOutDate" className="form-label">Check-Out Date</label>
+                <span><label htmlFor="checkOutDate" className="form-label">Check-Out Date</label></span>
                 <input
                   type="date"
                   id="checkOutDate"
@@ -60,15 +64,18 @@ const AvailableRoom = () => {
                   value={formData.checkOutDate}
                   onChange={handleChange}
                   min={formData.checkInDate}
-                  className="form-control"
+                  className="form-control online_book"
                 />
               </div>
               <button type="submit" className="btn btn-primary w-100">Show Available Rooms</button>
             </form>
           </div>
         </div>
+        {/* </div> */}
+        </div>
       </div>
 
+    <div className='m-4'>
       {availableRooms.length > 0 && (
         <div className="mt-5">
           <h3 className="mb-4">Available Rooms</h3>
@@ -79,6 +86,7 @@ const AvailableRoom = () => {
                   <th>Room Number</th>
                   <th>Type</th>
                   <th>Price</th>
+                  <th>Max Person</th>
                   <th>Description</th>
                   <th>Facility</th>
                   <th>Action</th>
@@ -90,6 +98,7 @@ const AvailableRoom = () => {
                     <td>{room.roomNumber}</td>
                     <td>{room.roomCategoryId.name}</td>
                     <td>{room.roomCategoryId.price}</td>
+                    <td>{room.roomCategoryId.maxPerson}</td>
                     <td>{room.roomCategoryId.description}</td>
                     <td>{room.roomCategoryId.facilities}</td>
                     <td className="text-center">
@@ -107,6 +116,7 @@ const AvailableRoom = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
