@@ -112,6 +112,9 @@
     display: none;
 }
 
+
+
+
 .sidebar {
     position: fixed;
     height: 100%;
@@ -413,7 +416,7 @@ main {
 .indicator.four {
     background: #f25656;
 }
-
+    
 .records {
     box-shadow: 0px 5px 5px -5px rgb(0 0 0 / 10%);
     background: #fff;

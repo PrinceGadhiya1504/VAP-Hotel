@@ -39,7 +39,7 @@ const AddCategory = () => {
       };
 
   return (
-     <div className="container">
+     <div className="Admincontainer">
       <div className="card">
         <h2>Add Category</h2>
         <form onSubmit={handleSubmit}>

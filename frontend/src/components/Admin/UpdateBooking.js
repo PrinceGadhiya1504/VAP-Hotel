@@ -67,7 +67,7 @@ const UpdateBooking = () => {
   };
 
   return (
-    <div className="container">
+    <div className="Admincontainer">
       <div className="card">
         <h2>Update Booking</h2>
         <form onSubmit={handleSubmit}>

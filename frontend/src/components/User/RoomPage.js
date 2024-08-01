@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import {Link} from 'react-router-dom'
+// import {Link} from 'react-router-dom'
 
 const RoomPage = () => {
 
-  const userId = localStorage.getItem('userId')
+  // const userId = localStorage.getItem('userId')
   const [rooms, setRooms] = useState([])
   // Filter the rooms to only include those that are available
   // const availableRooms = rooms.filter(room => room.status === 'available');

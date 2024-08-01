@@ -72,7 +72,7 @@ const Header = () => {
 
       <div className="main-content">
 
-        <header>
+        <div className='admin-header'>
           <div className="header-content">
             <label htmlFor="menu-toggle">
               <span className="las la-bars"></span>
@@ -101,7 +101,7 @@ const Header = () => {
               </div>
             </div>
           </div>
-        </header>
+        </div>
         <main>
           <div className="page-content">
             <Outlet />

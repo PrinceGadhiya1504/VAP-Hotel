@@ -31,7 +31,7 @@ const AddRoom = () => {
 
     fetchCategories();
   }, []);
-
+console.log(categories);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -47,7 +47,7 @@ const AddRoom = () => {
   };
 
   return (
-    <div className="container">
+    <div className="Admincontainer">
       <div className="card">
         <h2>Add Room</h2>
         <form onSubmit={handleSubmit}>
@@ -75,7 +75,7 @@ const AddRoom = () => {
                 onChange={handleChange}
               >
                 <option>Choose...</option>
-                {categories.map((category) => (
+                  {categories.map((category) => (
                   <option key={category._id} value={category._id}>
                     {category.name}
                   </option>

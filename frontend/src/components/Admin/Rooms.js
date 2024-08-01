@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import imgSrc from './assert/img/1.jpeg'; // Adjust the path based on your file structure
+// import imgSrc from './assert/img/1.jpeg'; // Adjust the path based on your file structure
 import axios from 'axios'
 import { Link } from 'react-router-dom';
 

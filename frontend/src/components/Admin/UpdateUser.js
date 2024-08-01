@@ -75,7 +75,7 @@ const UpdateUser = () => {
       }
       
   return (
-    <div className="container">
+    <div className="Admincontainer">
      <div className="card">
        <h2>Update Category</h2>
        <form onSubmit={handleSubmit}>

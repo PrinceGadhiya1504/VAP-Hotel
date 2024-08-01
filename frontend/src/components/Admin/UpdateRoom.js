@@ -60,7 +60,7 @@ const UpdateRoom = () => {
   };
 
   return (
-    <div className="container">
+    <div className="Admincontainer">
       <div className="card">
         <h2>Update Room</h2>
         <form onSubmit={handleSubmit}>
