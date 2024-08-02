@@ -46,13 +46,11 @@ const Footer = () => {
                <div className="container">
                   <div className="row">
                      <div className="col-md-10 offset-md-1">
-                        
                         <p>
-                        © 2019 All Rights Reserved. Design by <Link to="https://html.design/"> Free Html Templates</Link>
-                        <br/><br/>
-                        Distributed by <Link to="https://themewagon.com/" target="_blank">ThemeWagon</Link>
+                        © 2024 All Rights Reserved. Design by <Link to="https://github.com/PrinceGadhiya1504"> MERN Stack Developer</Link>
+                        {/* <br/><br/> */}
+                        {/* Distributed by <Link to="https://themewagon.com/" target="_blank">ThemeWagon</Link> */}
                         </p>
-
                      </div>
                   </div>
                </div>

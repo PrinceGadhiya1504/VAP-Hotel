@@ -6,7 +6,7 @@ const roomCategorySchema = new mongoose.Schema({
     maxPerson: { type: Number, required: true }, // Count with child 
     facilities: { type: String, required: true },
     description: { type: String, required: true },
-    // imageUrls: { type: [String] }, // Array of image URLs
+    image: { type: [String] }, // Array of image U  RLs
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 })

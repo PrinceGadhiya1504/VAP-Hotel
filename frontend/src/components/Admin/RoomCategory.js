@@ -57,6 +57,7 @@ const RoomCategory = () => {
           <thead>
             <tr>
               <th style={{ width: '5%' }}>#</th>
+              <th style={{ width: '5%' }}>Images</th>
               <th style={{ width: '5%' }}> Name </th>
               <th style={{ width: '5%' }}> Price </th>
               <th style={{ width: '5%' }}> Max Person </th>
@@ -70,6 +71,7 @@ const RoomCategory = () => {
               category.map((cat, index) => (
                 <tr key={index}>
                   <td style={{ width: '5%' }}>{index + 1}</td>
+                  <td style={{ width: '5%' }}> <img src={`./uploads/${cat.image}`} style={{ width: '200px', height: 'auto' }} />{cat.image}</td>
                   <td style={{ width: '5%' }}>{cat.name}</td>
                   <td style={{ width: '5%' }}>{cat.price}</td>
                   <td style={{ width: '5%' }}>{cat.maxPerson}</td>

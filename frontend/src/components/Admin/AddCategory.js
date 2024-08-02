@@ -9,7 +9,8 @@ const AddCategory = () => {
     price: '',
     maxPerson: '',
     facilities: '',
-    description: ''
+    description: '',
+    image: null
   });
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
@@ -17,9 +18,10 @@ const AddCategory = () => {
   // const navigate = useNavigate();
 
   const handleChange = (e) => {
+    const { name, value, files } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: files ? files[0] : value
     });
   };
 
@@ -27,8 +29,29 @@ const AddCategory = () => {
     e.preventDefault();
     setError("")
     console.log(formData);
+
+    const formDataToSend = new FormData();
+
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('price', formData.price);
+    formDataToSend.append('maxPerson', formData.maxPerson);
+    formDataToSend.append('facilities', formData.facilities);
+    formDataToSend.append('description', formData.description);
+    formDataToSend.append('image', formData.image);
+
+    //  // Use a loop to append each field from the formData state
+    //  for (const key in formData) {
+    //   if (formData.hasOwnProperty(key)) {
+    //     formDataToSend.append(key, formData[key]);
+    //   }
+    // }
+
     try {
-      const response = await axios.post('http://localhost:3001/roomCategory', formData)
+      const response = await axios.post('http://localhost:3001/roomCategory', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       if (response.status === 201) {
         // console.log(response.data);
         setSuccess("Category added Successfully")
@@ -114,6 +137,16 @@ const AddCategory = () => {
               id="description"
               name="description"
               value={formData.description}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="image">Image</label>
+            <input
+              type="file"
+              className="form-control"
+              id="image"
+              name="image"
               onChange={handleChange}
             />
           </div>

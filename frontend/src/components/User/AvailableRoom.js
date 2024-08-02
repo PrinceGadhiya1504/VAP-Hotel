@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const AvailableRoom = () => {
   const [availableRooms, setAvailableRooms] = useState([]);
@@ -10,7 +10,7 @@ const AvailableRoom = () => {
     checkOutDate: ''
   });
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Handle input changes
   const handleChange = (e) => {
@@ -65,7 +65,7 @@ const AvailableRoom = () => {
                     className="form-control online_book"
                   />
                 </div>
-                <button type="submit" className="btn btn-primary w-100">Show Available Rooms</button>
+                <button type="submit" className="book_btn w-100">Show Available Rooms</button>
               </form>
             </div>
           </div>

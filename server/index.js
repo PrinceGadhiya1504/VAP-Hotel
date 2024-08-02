@@ -5,6 +5,11 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const auth = require('./middleware/auth');
+
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
 const User = require('./model/User');
 const RoomCategory = require('./model/RoomCategory');
 const Room = require('./model/Room');
@@ -14,7 +19,7 @@ const corsOptions = {
     origin: 'http://localhost:3000', // Allow only this origin
     credentials: true, // Allow cookies to be sent
   };
-
+ 
 const app = express()
 app.use(express.json())
 app.use(cookieParser());
@@ -22,6 +27,24 @@ app.use(cors(corsOptions))
 
 mongoose.connect("mongodb+srv://PrinceGadhiya:123@merndb.eyezfe8.mongodb.net/VAP-Hotel")
  
+
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  console.error('Uploads directory does not exist. Creating now...');
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ storage: storage });
+  
 // Registration 
 app.post('/registration', async(req, res) => {
     try {
@@ -190,11 +213,12 @@ app.delete('/user/:id',  async(req, res) => {
 })
 
 // Add new Category
-app.post('/roomCategory', async(req, res) => {
+app.post('/roomCategory',upload.single('image'), async(req, res) => {
     try {
         const { name, price, maxPerson, facilities, description } = req.body
+        const image = req.file ? req.file.filename : null;
 
-        if(!(name && price && maxPerson && facilities && description)){
+        if(!(name && price && maxPerson && facilities && description && image)){
             res.status(400).send("All fields are Require")
         }
         // check Room already exitst - roomNumber
@@ -207,7 +231,8 @@ app.post('/roomCategory', async(req, res) => {
             price, 
             maxPerson, 
             facilities, 
-            description
+            description,
+            image
         }) 
         res.status(201).send(newCategory)
 

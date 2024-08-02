@@ -331,6 +331,7 @@ button {
     background-color: #000000c7;
     padding: 30px 35px;
     border-left: #ff0909 solid 5px;
+    border-radius: 5%;
 }
 
 .book_room h1 {
@@ -343,7 +344,7 @@ button {
     text-align: center;
 }
 
-.book_now span {
+.book_now label {
     display: block;
     color: #fff;
     font-size: 18px;
@@ -362,6 +363,10 @@ button {
     position: relative;
 }
 
+/* .book_now .online_book:hover{
+    border: #ff0000 solid 1px;
+} */
+
 .date_cua {
     position: absolute;
     width: 29px;
@@ -373,13 +378,13 @@ button {
 
 .book_btn {
     background-color: #fe0000;
-    max-width: 189px;
+    max-width: 250px;
     width: 100%;
     margin: 0 auto;
     padding: 10px 0;
     border-radius: 50px;
     color: #fff;
-    font-size: 20px;
+    font-size: 18px;
     transition: ease-in 0.5s;
     display: block;
 }
@@ -387,7 +392,7 @@ button {
 .book_btn:hover {
     background-color: #fff;
     color: #fe0000;
-    transition: ease-in 0.5s;
+    transition: ease-in 0.3s;
 }
 
 .carousel-control-next,
