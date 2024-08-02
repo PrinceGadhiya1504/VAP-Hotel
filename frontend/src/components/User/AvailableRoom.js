@@ -1,9 +1,10 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AvailableRoom = () => {
   const [availableRooms, setAvailableRooms] = useState([]);
+  
   const [formData, setFormData] = useState({
     checkInDate: '',
     checkOutDate: ''
@@ -34,91 +35,85 @@ const AvailableRoom = () => {
 
   return (
     <div className="booking_ocline">
-
-    <div className="container my-5">
-      <div className="row">
-        <div className="col-md-5 mx-auto">
-          {/* <div className="card shadow-lg p-4"> */}
-          <div className="book_room">
-
-            <h1 className="card-title">Book a Room</h1>
-            <form className="book_now" onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <span><label htmlFor="checkInDate" className="form-label">Check-In Date</label></span>
-                <input
-                  type="date"
-                  id="checkInDate"
-                  name="checkInDate"
-                  value={formData.checkInDate}
-                  onChange={handleChange}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="form-control online_book"
-                />
-              </div>
-              <div className="mb-3">
-                <span><label htmlFor="checkOutDate" className="form-label">Check-Out Date</label></span>
-                <input
-                  type="date"
-                  id="checkOutDate"
-                  name="checkOutDate"
-                  value={formData.checkOutDate}
-                  onChange={handleChange}
-                  min={formData.checkInDate}
-                  className="form-control online_book"
-                />
-              </div>
-              <button type="submit" className="btn btn-primary w-100">Show Available Rooms</button>
-            </form>
+      <div className="container my-5">
+        <div className="row">
+          <div className="col-md-5 mx-auto">
+            <div className="book_room">
+              <h1 className="card-title">Book a Room</h1>
+              <form className="book_now" onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="checkInDate" className="form-label">Check-In Date</label>
+                  <input
+                    type="date"
+                    id="checkInDate"
+                    name="checkInDate"
+                    value={formData.checkInDate}
+                    onChange={handleChange}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="form-control online_book"
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="checkOutDate" className="form-label">Check-Out Date</label>
+                  <input
+                    type="date"
+                    id="checkOutDate"
+                    name="checkOutDate"
+                    value={formData.checkOutDate}
+                    onChange={handleChange}
+                    min={formData.checkInDate}
+                    className="form-control online_book"
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary w-100">Show Available Rooms</button>
+              </form>
+            </div>
           </div>
-        </div>
-        {/* </div> */}
         </div>
       </div>
 
-    <div className='m-4'>
-      {availableRooms.length > 0 && (
-        <div className="mt-5">
-          <h3 className="mb-4">Available Rooms</h3>
-          <div className="table-responsive">
-            <table className="table table-bordered table-hover">
-              <thead className="table-light">
-                <tr>
-                  <th>Room Number</th>
-                  <th>Type</th>
-                  <th>Price</th>
-                  <th>Max Person</th>
-                  <th>Description</th>
-                  <th>Facility</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {availableRooms.map((room, index) => (
-                  <tr key={index}>
-                    <td>{room.roomNumber}</td>
-                    <td>{room.roomCategoryId.name}</td>
-                    <td>{room.roomCategoryId.price}</td>
-                    <td>{room.roomCategoryId.maxPerson}</td>
-                    <td>{room.roomCategoryId.description}</td>
-                    <td>{room.roomCategoryId.facilities}</td>
-                    <td className="text-center">
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => navigate(`/booking/${room._id}`, { state: { checkInDate: formData.checkInDate, checkOutDate: formData.checkOutDate } })}
-                      >
-                        Book Now
-                      </button>
-                    </td>
+      <div className='m-4'>
+        {availableRooms.length > 0 && (
+          <div className="mt-5">
+            <h3 className="mb-4">Available Rooms</h3>
+            <div className="table-responsive">
+              <table className="table table-bordered table-hover">
+                <thead className="table-light">
+                  <tr>
+                    <th>Room Number</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Max Person</th>
+                    <th>Description</th>
+                    <th>Facility</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {availableRooms.map((room, index) => (
+                    <tr key={index}>
+                      <td>{room.roomNumber}</td>
+                      <td>{room.roomCategoryId.name}</td>
+                      <td>{room.roomCategoryId.price}</td>
+                      <td>{room.roomCategoryId.maxPerson}</td>
+                      <td>{room.roomCategoryId.description}</td>
+                      <td>{room.roomCategoryId.facilities}</td>
+                      <td className="text-center">
+                        <Link 
+                          to={`/booking/${room._id}?checkInDate=${formData.checkInDate}&checkOutDate=${formData.checkOutDate}`}>
+                          <button className='btn btn-primary'>Book Now</button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default AvailableRoom;

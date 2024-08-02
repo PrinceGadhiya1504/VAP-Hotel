@@ -203,12 +203,12 @@ app.post('/roomCategory', async(req, res) => {
             return res.status(401).send({msg:`Category already exists with ${name} Name`});
         }
         const newCategory = await RoomCategory.create({
-            name,   
+            name,    
             price, 
             maxPerson, 
             facilities, 
             description
-        })
+        }) 
         res.status(201).send(newCategory)
 
     } catch (error) {
@@ -393,12 +393,11 @@ app.post('/availableRoom', async (req, res) => {
     }
 });
 
-
+ 
 // Booking Room
 app.post('/booking', async(req, res) => {
     try{
-
-        const { userId, roomId, checkInDate, checkOutDate, specialRequests, numberOfGuests, totalPrice } = req.body
+        const { userId, roomId, checkInDate, checkOutDate, status, totalPrice, specialRequests } = req.body
         // const totalPrice = req.body.totalPrice
 
         // console.log( userId, roomId, checkInDate, checkOutDate, specialRequests, numberOfGuests );

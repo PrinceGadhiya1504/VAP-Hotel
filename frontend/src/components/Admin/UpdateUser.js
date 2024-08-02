@@ -42,8 +42,7 @@ const UpdateUser = () => {
         })
       },[id])
       
-      // console.log(data);
-      console.log(formData);
+      //console.log(formData);
     
       const handleChange = (e) => {
         setFormData({
