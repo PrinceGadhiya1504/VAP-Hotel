@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 const AddRoom = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +9,10 @@ const AddRoom = () => {
     status: 'available'
   });
 
-  const navigate = useNavigate();
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+
+  // const navigate = useNa vigate();
   const [categories, setCategories] = useState([]);
 
   const handleChange = (e) => {
@@ -34,15 +37,25 @@ const AddRoom = () => {
 console.log(categories);
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("")
+
     try {
       const response = await axios.post('http://localhost:3001/room', formData);
       if (response.status === 201) {
-        navigate('/admin/rooms');
+        // navigate('/admin/rooms');
+        setSuccess("Room added Successfully")
+        setTimeout(() => {
+          window.location.href = '/admin/rooms'
+        }, 2000)
       } else {
-        console.error("Error: Room could not be created.");
+        alert(response.statusText);
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      if (error.response) {
+        setError(error.response.data.msg)
+      } else {
+        setError("Server Error.....")
+      }
     }
   };
 
@@ -51,6 +64,10 @@ console.log(categories);
       <div className="card">
         <h2>Add Room</h2>
         <form onSubmit={handleSubmit}>
+        {error && <div className='mt-3 alert alert-danger'>{error}</div>}
+          {success && (
+            <div className='mt-3 alert alert-success'>{success}</div>
+          )}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="roomNumber">Room Number</label>

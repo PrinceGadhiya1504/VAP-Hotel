@@ -40,7 +40,7 @@ const Users = () => {
             <select name="" id="">
               <option value="">ID</option>
             </select> */}
-            <Link to="/registration"><button>Add User</button></Link>
+            <Link to="/register"><button>Add User</button></Link>
           </div>
 
           <div className="browse">

@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 
-
 const Register = () => {
   const [form, setForm] = useState({
     name: "",
@@ -13,10 +12,11 @@ const Register = () => {
     country: "",
     email: "",
     password: "",
+    dateOfBirth: "",
     role: "guest",
   });
-const [error, setError] = useState('');
-const navigate = useNavigate()
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -33,9 +33,8 @@ const navigate = useNavigate()
 
       if (response.status === 201) {
         const data = response.data;
-        console.log(data); // Handle the response data
-        // Redirect or update UI as needed
-        navigate('/')
+        console.log(data);
+        navigate('/');
       }
     } catch (error) {
       if (error.response) {
@@ -47,128 +46,160 @@ const navigate = useNavigate()
     }
   };
 
+  // Inline styles for gradient background and card styling
+  const containerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+    background: 'linear-gradient(to right, #4A90E2, #9013FE)', // Gradient background
+  };
+
+  const cardStyle = {
+    width: '100%',
+    maxWidth: '800px',
+    padding: '20px',
+    backgroundColor: 'white', // Card background color
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-green-400 to-blue-500">
-    <div className="w-full max-w-sm p-6 space-y-4 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-bold text-center text-gray-800">Register</h2>
-      {error && <p className="text-red-500 text-center">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.name}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">phone</label>
-          <input
-            id="phone"
-            name="phone"
-            type="text"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.phone}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
-          <input
-            id="address"
-            name="address"
-            type="text"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.address}
-            onChange={handleChange}
-          />
-          <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
-          <input
-            id="city"
-            name="city"
-            type="text"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.city}
-            onChange={handleChange}
-          />
-          <label htmlFor="state" className="block text-sm font-medium text-gray-700">State</label>
-          <input
-            id="state"
-            name="state"
-            type="text"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.state}
-            onChange={handleChange}
-          />
-          <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country</label>
-          <input
-            id="country"
-            name="country"
-            type="text"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.country}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">Date Of Birth</label>
-          <input
-            id="dateOfBirth"
-            name="dateOfBirth"
-            type="date"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.dateOfBirth}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.email}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            className="w-full px-2 py-1 mt-1 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-            value={form.password}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
+    <div style={containerStyle}>
+      <div className="card" style={cardStyle}>
+        <h2 className="text-center mb-4">Register</h2>
+        {error && <div className="alert alert-danger">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label htmlFor="name" className="form-label">Name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                className="form-control"
+                value={form.name}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="phone" className="form-label">Phone</label>
+              <input
+                id="phone"
+                name="phone"
+                type="text"
+                required
+                className="form-control"
+                value={form.phone}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label htmlFor="address" className="form-label">Address</label>
+              <input
+                id="address"
+                name="address"
+                type="text"
+                required
+                className="form-control"
+                value={form.address}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="city" className="form-label">City</label>
+              <input
+                id="city"
+                name="city"
+                type="text"
+                required
+                className="form-control"
+                value={form.city}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label htmlFor="state" className="form-label">State</label>
+              <input
+                id="state"
+                name="state"
+                type="text"
+                required
+                className="form-control"
+                value={form.state}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="country" className="form-label">Country</label>
+              <input
+                id="country"
+                name="country"
+                type="text"
+                required
+                className="form-control"
+                value={form.country}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label htmlFor="dateOfBirth" className="form-label">Date of Birth</label>
+              <input
+                id="dateOfBirth"
+                name="dateOfBirth"
+                type="date"
+                required
+                className="form-control"
+                value={form.dateOfBirth}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="email" className="form-label">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="form-control"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label htmlFor="password" className="form-label">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="form-control"
+                value={form.password}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
           <button
             type="submit"
-            className="w-full px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            className="btn btn-primary w-100"
           >
             Register
           </button>
-        </div>
-      </form>
-      <p className="text-sm text-center text-gray-600">
-        Already have an account? <Link to="/" className="text-green-600 hover:text-green-500">Login</Link>
-      </p>
+        </form>
+        <p className="text-center mt-3">
+          Already have an account? <Link to="/login" className="link-primary">Login</Link>
+        </p>
+      </div>
     </div>
-  </div>
   );
 };
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const UpdateBooking = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +13,10 @@ const UpdateBooking = () => {
     numberOfGuests: '',
     specialRequests: ''
   });
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -46,16 +48,26 @@ const UpdateBooking = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("")  
     try {
       const response = await axios.put(`http://localhost:3001/booking/${id}`, formData);
       if (response.status === 200) {
-        console.log(response.data);
-        navigate('/admin/bookings');
+        // console.log(response.data);
+        // navigate('/admin/bookings');
+        setSuccess("Booking Update Successfully")
+        setTimeout(() => {
+          window.location.href = '/admin/bookings'
+        }, 2000)
       } else {
-        console.log("error");
+        // console.log("error");
+        alert(response.statusText);
       }
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        setError(error.response.data.msg)
+      } else {
+        setError("Server Error.....")
+      }
     }
   };
 
@@ -71,6 +83,8 @@ const UpdateBooking = () => {
       <div className="card">
         <h2>Update Booking</h2>
         <form onSubmit={handleSubmit}>
+        {error && <div className='mt-3 alert alert-danger'>{error}</div>}
+          {success && <div className='mt-3 alert alert-success'>{success}</div>}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="guestName">Guest Name</label>

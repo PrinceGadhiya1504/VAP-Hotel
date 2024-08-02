@@ -200,7 +200,7 @@ app.post('/roomCategory', async(req, res) => {
         // check Room already exitst - roomNumber
         const existingRoom = await RoomCategory.findOne({name})
         if(existingRoom){
-            return res.status(401).send(`Room already exists with ${name} Name`);
+            return res.status(401).send({msg:`Category already exists with ${name} Name`});
         }
         const newCategory = await RoomCategory.create({
             name,   
@@ -254,7 +254,8 @@ app.put('/roomCategory/:id',  async(req, res) => {
         )
 
         if(!updateCategory){
-          return res.status(404).send('Category not found')
+        //   return res.status(404).send('Category not found')
+          return res.status(401).send({msg:'Category not found'});
         }
         res.status(200).json(updateCategory)
     } catch (error) {
@@ -286,7 +287,7 @@ app.post('/room', async (req, res) => {
       // Check if the room already exists
       const existingRoom = await Room.findOne({ roomNumber });
       if (existingRoom) {
-        return res.status(401).send(`Room already exists with room number ${roomNumber}`);
+        return res.status(401).send({msg:`Room already exists with room number ${roomNumber}`});
       }
       // Create new room
       const newRoom = await Room.create({
@@ -336,7 +337,7 @@ app.put('/room/:id', async (req, res) => {
         { new: true }
       );
       if (!updateRoom) {
-        return res.status(404).send('Room Not Found');
+        return res.status(404).send({msg:'Room Not Found'});
       }
       res.status(200).send(updateRoom);
     //console.log(updateRoom);
@@ -350,7 +351,7 @@ app.delete('/room/:id', async(req, res) => {
     try {
         const deleteRoom = await Room.findByIdAndDelete(req.params.id)
         if(!deleteRoom){
-            res.status(404).send('User not found')
+            res.status(404).send({msg:'User not found'})
         }
         res.status(200).send('Room delete Successfully')
     } catch (error) {
@@ -468,7 +469,7 @@ app.put('/booking/:id', async(req, res) => {
             {new: true}
         )
         if(!updateBooking){
-            res.status(404).send('Booking Not Found.')
+            res.status(404).send({msg:'Booking Not Found.'})
         }
         if(status === 'cancelled'){
             const room = await Room.findById(updateBooking.roomId)

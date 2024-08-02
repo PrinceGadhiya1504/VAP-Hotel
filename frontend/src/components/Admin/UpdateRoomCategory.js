@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const UpdateRoomCategory = () => {
 
@@ -11,8 +11,10 @@ const UpdateRoomCategory = () => {
     facilities: '',
     description: ''
   });
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const {id} = useParams()
 
   useEffect(() => {
@@ -37,17 +39,26 @@ const UpdateRoomCategory = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("")  
     try {
       const response = await axios.put(`http://localhost:3001/roomCategory/${id}`, formData)
       if(response.status === 200){
-        console.log(response.data);
-        navigate('/admin/category')
+        // console.log(response.data);
+        // navigate('/admin/category')
+        setSuccess("Category Update Successfully")
+        setTimeout(() => {
+          window.location.href = '/admin/category'
+        }, 2000)
       } else {
-        console.log("error");
+        alert(response.statusText);
       }
-    } catch (error) {
-      console.log(error);      
-    }
+      } catch (error) {
+        if (error.response) {
+          setError(error.response.data.msg)
+        } else {
+          setError("Server Error.....")
+        }
+      }
   };
 
   return (
@@ -55,6 +66,8 @@ const UpdateRoomCategory = () => {
      <div className="card">
        <h2>Update Category</h2>
        <form onSubmit={handleSubmit}>
+       {error && <div className='mt-3 alert alert-danger'>{error}</div>}
+          {success && <div className='mt-3 alert alert-success'>{success}</div>}
            <div className="form-group">
              <label htmlFor="name">Name</label>
              <input
