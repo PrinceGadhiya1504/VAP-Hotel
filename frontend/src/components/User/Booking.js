@@ -68,6 +68,7 @@ const Booking = () => {
     e.preventDefault();
     setError("");
     try {
+      console.log(formData);
       const response = await axios.post('http://localhost:3001/booking', formData);
       if (response.status === 201) {
         setSuccess("Booking Successfully");

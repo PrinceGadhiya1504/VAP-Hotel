@@ -400,18 +400,17 @@ app.post('/booking', async(req, res) => {
         const { userId, roomId, checkInDate, checkOutDate, status, totalPrice, specialRequests } = req.body
         // const totalPrice = req.body.totalPrice
 
-        // console.log( userId, roomId, checkInDate, checkOutDate, specialRequests, numberOfGuests );
+        // console.log( userId, roomId, checkInDate, checkOutDate, status, totalPrice, specialRequests );
         // console.log( totalPrice );
         
         // Check if the room is available
         const room = await Room.findById(roomId)
         if (!room) {
-            return res.status(404).send("Room not found");
+            return res.status(404).send({msg:"Room not found"});
         }
-
-        if (room.status === 'booked') {
-            return res.status(400).send("Room is already booked");
-        }
+        // if (room.status === 'booked') {
+        //     return res.status(400).send({msg:"Room is already booked"});
+        // }
 
         const newBooking = await Booking.create({
             userId,
@@ -421,7 +420,7 @@ app.post('/booking', async(req, res) => {
             status: 'pending', 
             totalPrice,
             specialRequests,
-            numberOfGuests
+            // numberOfGuests
         })
     
         // Update Room status
