@@ -5,6 +5,12 @@ import { Link } from 'react-router-dom'
 // import "bootstrap/dist/js/bootstrap.bundle.min";
 
 const Header = () => {
+
+const logOut = () => {
+   localStorage.removeItem('userId');
+   window.location.href = '/';
+   alert("Logout Successfully...")
+}
   return (
     <div>
       <header>
@@ -47,6 +53,12 @@ const Header = () => {
                               </li>
                               <li className="nav-item">
                                  <Link className="nav-link" to="/contact">Contact Us</Link>
+                              </li>
+                              <li className="nav-item">
+                                 <Link className="nav-link" to="/login">Login</Link>
+                              </li>
+                              <li>
+                                 <Link className="nav-link" onClick={logOut}>logout</Link>
                               </li>
                            </ul>
                         </div>

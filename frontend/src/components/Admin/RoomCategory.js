@@ -71,7 +71,7 @@ const RoomCategory = () => {
               category.map((cat, index) => (
                 <tr key={index}>
                   <td style={{ width: '5%' }}>{index + 1}</td>
-                  <td style={{ width: '5%' }}> <img src={`./uploads/${cat.image}`} style={{ width: '200px', height: 'auto' }} />{cat.image}</td>
+                  <td style={{ width: '5%' }}> <img src={`http://localhost:3001/uploads/${cat.image}`} alt={cat.image} style={{ width: '100px', height: '100px' }} /></td>
                   <td style={{ width: '5%' }}>{cat.name}</td>
                   <td style={{ width: '5%' }}>{cat.price}</td>
                   <td style={{ width: '5%' }}>{cat.maxPerson}</td>

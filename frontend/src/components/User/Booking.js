@@ -69,6 +69,10 @@ const Booking = () => {
     setError("");
     try {
       console.log(formData);
+      if(!userId){
+        alert("Login Required")
+        window.location.href = '/login';
+      }
       const response = await axios.post('http://localhost:3001/booking', formData);
       if (response.status === 201) {
         setSuccess("Booking Successfully");

@@ -46,7 +46,7 @@ console.log(categories);
         setSuccess("Room added Successfully")
         setTimeout(() => {
           window.location.href = '/admin/rooms'
-        }, 2000)
+        }, 1000)
       } else {
         alert(response.statusText);
       }

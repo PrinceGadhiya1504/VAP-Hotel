@@ -35,7 +35,7 @@ const RoomPage = () => {
                <div className="col-md-4 col-sm-6">
                   <div id="serv_hover"  className="room">
                      <div className="room_img">
-                        <figure><img src="images/room4.jpg" alt="#"/></figure>
+                        <img src={`http://localhost:3001/uploads/${room.image}`} alt={index.image} style={{ width: '300px', height: '300px' }} />
                      </div>
                      <div className="bed_room">
                         <h3>{room.name}</h3>

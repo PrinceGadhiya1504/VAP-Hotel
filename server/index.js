@@ -44,6 +44,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+app.use("/uploads", express.static("uploads"))
   
 // Registration 
 app.post('/registration', async(req, res) => {
@@ -427,6 +428,7 @@ app.post('/booking', async(req, res) => {
 
         // console.log( userId, roomId, checkInDate, checkOutDate, status, totalPrice, specialRequests );
         // console.log( totalPrice );
+        
         
         // Check if the room is available
         const room = await Room.findById(roomId)
