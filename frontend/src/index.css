@@ -1305,6 +1305,7 @@ table tbody tr {
     cursor: pointe;
     color: #fff;
     background-color: #255850;
+    border-radius: 10px;
 }
 
 .deleteButton{
@@ -1316,6 +1317,7 @@ table tbody tr {
     cursor: pointe;
     color: #fff;
     background-color: #f25656;
+    border-radius: 10px;
 }
 
 .Admincontainer {

@@ -262,46 +262,77 @@ app.get('/roomCategory/:id',  async(req, res) => {
             return res.status(404).send('Category not found')
         }
         res.status(200).json(category)
+        console.log(category);
+
     } catch (error) {
         console.log(error);
         return res.status(500).send("Internal Server Error");
     }
 })
 
-// Update Category
-app.put('/roomCategory/:id',  async(req, res) => { 
-    const categoryId = req.params.id
-    const { name, price, maxPerson, facilities, description } = req.body
+// Update Category Route
+app.put('/roomCategory/:id', upload.single('image'), async (req, res) => {
+    const categoryId = req.params.id;
+    const { name, price, maxPerson, facilities, description } = req.body;
+  
     try {
-        const updateCategory = await RoomCategory.findByIdAndUpdate(
-            categoryId,
-            { name, price, maxPerson, facilities, description },
-            { new: true }
-        )
-
-        if(!updateCategory){
-        //   return res.status(404).send('Category not found')
-          return res.status(401).send({msg:'Category not found'});
-        }
-        res.status(200).json(updateCategory)
+      const updateFields = { name, price, maxPerson, facilities, description };
+  
+      if (req.file) {
+        updateFields.image = req.file.filename;
+      }
+  
+      const updatedCategory = await RoomCategory.findByIdAndUpdate(
+        categoryId,
+        updateFields,
+        { new: true }
+      );
+  
+      if (!updatedCategory) {
+        return res.status(404).send({ msg: 'Category not found' });
+      }
+  
+      res.status(200).json(updatedCategory);
     } catch (error) {
-        console.log(error);
-        res.status(500).json(error)
+      console.log(error);
+      res.status(500).json({ msg: 'Server error' });
     }
-})
+  });
 
 // Delete Category
-app.delete('/roomCategory/:id',  async(req, res) => {
+app.delete('/roomCategory/:id', async (req, res) => {
+    const categoryId = req.params.id;
+  
     try {
-        const deleteCategory = await RoomCategory.findByIdAndDelete(req.params.id)
-        if(!deleteCategory){
-            res.status(404).send('Category not found')
-        }
-        res.status(200).send('Category delete Successfully')
+      // Find the category by id
+      const category = await RoomCategory.findById(categoryId);
+      if (!category) {
+        return res.status(404).json({ msg: 'Category not found' });
+      }
+  
+      // Get the image file path
+      const imagePath = path.join(__dirname, 'uploads', category.image);
+  
+      // Delete the category from the database
+      await RoomCategory.findByIdAndDelete(categoryId);
+  
+      // Check if the image file exists and delete it
+      if (fs.existsSync(imagePath)) {
+        fs.unlink(imagePath, (err) => {
+          if (err) {
+            console.error('Error deleting image file:', err);
+          } else {
+            console.log('Image file deleted:', imagePath);
+          }
+        });
+      }
+  
+      res.status(200).json({ msg: 'Category and image deleted successfully' });
     } catch (error) {
-        res.status(500).send(error)
+      console.error(error);
+      res.status(500).json({ msg: 'Server error' });
     }
-})
+  });
 
 
 app.post('/room', async (req, res) => {
@@ -429,7 +460,7 @@ app.post('/booking', async(req, res) => {
         // console.log( userId, roomId, checkInDate, checkOutDate, status, totalPrice, specialRequests );
         // console.log( totalPrice );
         
-        
+
         // Check if the room is available
         const room = await Room.findById(roomId)
         if (!room) {

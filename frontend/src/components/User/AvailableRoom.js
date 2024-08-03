@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const AvailableRoom = () => {
   const [availableRooms, setAvailableRooms] = useState([]);
+  const userId = localStorage.getItem('userId');
   
   const [formData, setFormData] = useState({
     checkInDate: '',
@@ -32,6 +33,13 @@ const AvailableRoom = () => {
         console.error('Error:', error);
       });
   };
+
+  const loginRequire = () => {
+    if(!userId){
+      alert("Login Required")
+      window.location.href = '/login';
+    }
+  }
 
   return (
     <div className="booking_ocline">
@@ -101,7 +109,7 @@ const AvailableRoom = () => {
                       <td className="text-center">
                         <Link 
                           to={`/booking/${room._id}?checkInDate=${formData.checkInDate}&checkOutDate=${formData.checkOutDate}`}>
-                          <button className='btn btn-primary'>Book Now</button>
+                          <button className='btn btn-primary' onClick={loginRequire}>Book Now</button>
                         </Link>
                       </td>
                     </tr>

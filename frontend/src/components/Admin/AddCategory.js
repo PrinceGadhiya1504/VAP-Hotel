@@ -1,9 +1,7 @@
 import axios from 'axios';
-import React, { useState } from 'react'
-// import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 
 const AddCategory = () => {
-
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -12,22 +10,34 @@ const AddCategory = () => {
     description: '',
     image: null
   });
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
-
-  // const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value
-    });
+    if (name === 'image' && files.length > 0) {
+      const file = files[0];
+      setFormData({
+        ...formData,
+        [name]: file
+      });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("")
+    setError("");
     console.log(formData);
 
     const formDataToSend = new FormData();
@@ -39,7 +49,8 @@ const AddCategory = () => {
     formDataToSend.append('description', formData.description);
     formDataToSend.append('image', formData.image);
 
-    //  // Use a loop to append each field from the formData state
+
+       //  // Use a loop to append each field from the formData state
     //  for (const key in formData) {
     //   if (formData.hasOwnProperty(key)) {
     //     formDataToSend.append(key, formData[key]);
@@ -53,21 +64,18 @@ const AddCategory = () => {
         },
       });
       if (response.status === 201) {
-        // console.log(response.data);
-        setSuccess("Category added Successfully")
+        setSuccess("Category added successfully");
         setTimeout(() => {
-          window.location.href = '/admin/category'
-        }, 2000)
-        // navigate('/admin/category')
-      }
-      else {
+          window.location.href = '/admin/category';
+        }, 500);
+      } else {
         alert(response.statusText);
       }
     } catch (error) {
       if (error.response) {
-        setError(error.response.data.msg)
+        setError(error.response.data.msg);
       } else {
-        setError("Server Error.....")
+        setError("Server error...");
       }
     }
   };
@@ -78,9 +86,7 @@ const AddCategory = () => {
         <h2>Add Category</h2>
         <form onSubmit={handleSubmit}>
           {error && <div className='mt-3 alert alert-danger'>{error}</div>}
-          {success && (
-            <div className='mt-3 alert alert-success'>{success}</div>
-          )}
+          {success && <div className='mt-3 alert alert-success'>{success}</div>}
           <div className="form-group">
             <label htmlFor="name">Name</label>
             <input
@@ -90,7 +96,7 @@ const AddCategory = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              autoComplete='off'
+              autoComplete="off"
               autoFocus
             />
           </div>
@@ -109,7 +115,7 @@ const AddCategory = () => {
             <div className="form-group">
               <label htmlFor="maxPerson">maxPerson</label>
               <input
-                type='number'
+                type="number"
                 id="maxPerson"
                 name="maxPerson"
                 className="form-control"
@@ -127,7 +133,7 @@ const AddCategory = () => {
               name="facilities"
               value={formData.facilities}
               onChange={handleChange}
-              autoComplete='off'
+              autoComplete="off"
             />
           </div>
           <div className="form-group">
@@ -149,12 +155,19 @@ const AddCategory = () => {
               name="image"
               onChange={handleChange}
             />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{ width: '100px', height: '100px', marginLeft: '10px' }}
+              />
+            )}
           </div>
           <button type="submit" className="submit-btn">Add Category</button>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AddCategory
+export default AddCategory;
