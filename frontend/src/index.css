@@ -304,21 +304,33 @@ button {
 
 
 /** banner section **/
+/* Home.css */
 
 .banner_main {
     position: relative;
-}
-
-.banner .carousel-indicators li {
-    width: 20px;
-    height: 20px;
-    border-radius: 30px;
-    background: #000;
-}
-
-.banner .carousel-indicators .active {
-    background-color: #fe0000;
-}
+    overflow: hidden;
+  }
+  
+  .carousel-image {
+    height: 60vh; /* Adjust based on design */
+    object-fit: cover; /* Maintain aspect ratio and cover container */
+    width: 100%; /* Ensure image covers the container width */
+  }
+  
+  .carousel-item {
+    transition: opacity 0.5s ease-in-out; /* Smooth transition effect */
+  }
+  
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for visibility */
+    border-radius: 50%;
+  }
+  
+  .carousel-indicators li {
+    background-color: #fff; /* Indicator color */
+  }
+  
 
 .booking_ocline {
     position: fix;

@@ -64,7 +64,7 @@ const AddGalleryImage = () => {
   };
 
   return (
-    <div className="container">
+    <div className="Admincontainer">
       <div className="card">
         <h2>Add Gallery Image</h2>
         <form onSubmit={handleSubmit}>

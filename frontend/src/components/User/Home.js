@@ -1,43 +1,51 @@
-import React from 'react'
-import About from './About'
+import React, { useEffect, useState } from 'react';
+import About from './About';
+import axios from 'axios';
 
 const Home = () => {
-  return (
-    <div>
-        <section className="banner_main">
-         <div id="myCarousel" className="carousel slide banner" data-ride="carousel">
-            <ol className="carousel-indicators">
-               <li data-target="#myCarousel" data-slide-to="0" className="active"></li>
-               <li data-target="#myCarousel" data-slide-to="1"></li>
-               <li data-target="#myCarousel" data-slide-to="2"></li>
-            </ol>
-            <div className="carousel-inner">
-               <div className="carousel-item active">
-                  <img className="first-slide" src="./images/banner1.jpg" alt="First slide"/>
-                  <div className="container">
-                  </div>
+   const [gallery, setGallery] = useState([]);
+
+   useEffect(() => {
+      axios.get('http://localhost:3001/gallery')
+         .then(response => {
+            const filteredGallery = response.data.filter(item => item.category === 'slider');
+            setGallery(filteredGallery);
+            console.log(filteredGallery);
+         })
+         .catch(error => {
+            console.error("There was an error fetching the gallery images!", error);
+         });
+   }, []);
+
+   return (
+      <div>
+         <section className="banner_main">
+            <div id="myCarousel" className="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+               <ol className="carousel-indicators">
+                  {gallery.map((_, index) => (
+                     <li key={index} data-bs-target="#myCarousel" data-bs-slide-to={index} className={index === 0 ? 'active' : ''}></li>
+                  ))}
+               </ol>
+               <div className="carousel-inner">
+                  {gallery.map((item, index) => (
+                     <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                        <img className="d-block w-100 carousel-image" src={`http://localhost:3001/uploads/${item.imageName}`} alt={`Slide ${index + 1}`} />
+                     </div>
+                  ))}
                </div>
-               <div className="carousel-item">
-                  <img className="second-slide" src="./images/banner2.jpg" alt="Second slide"/>
-               </div>
-               <div className="carousel-item">
-                  <img className="third-slide" src="./images/banner3.jpg" alt="Third slide"/>
-               </div>
+               <a className="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
+                  <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span className="visually-hidden">Previous</span>
+               </a>
+               <a className="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
+                  <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span className="visually-hidden">Next</span>
+               </a>
             </div>
-            <a className="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
-            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span className="sr-only">Previous</span>
-            </a>
-            <a className="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
-            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-            <span className="sr-only">Next</span>
-            </a>
-         </div>
-        
-      </section>
-      <About/>
-    </div>
-  )
+         </section>
+         <About/>
+      </div>
+   );
 }
 
-export default Home
+export default Home;
