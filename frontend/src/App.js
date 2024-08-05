@@ -28,6 +28,8 @@ import AdminUpdateBooking from './components/Admin/UpdateBooking';
 import AdminUsers from './components/Admin/Users';
 import UpdateUser from './components/Admin/UpdateUser';
 import AdminPayments from './components/Admin/Payments';
+import AddGalleryImage from './components/Admin/AddGalleryImage';
+import UpdateGalleryImage from './components/Admin/UpdateGalleryImage';
 import AdminGallery from './components/Admin/Gallery';
 
 // Import other page components as needed
@@ -62,7 +64,9 @@ function App() {
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/editUser/:id" element={<UpdateUser />} />
           <Route path="/admin/payments" element={<AdminPayments />} />
-          <Route path="/admin/gallery" element={<AdminGallery />} />
+          <Route path="/admin/gallery" element={<AdminGallery/>} />
+          <Route path="/admin/addImage" element={<AddGalleryImage/>} />
+          <Route path="/admin/editGallery/:id" element={<UpdateGalleryImage/>} />
         </Route>
 
         {/* Common Routes */}
@@ -70,26 +74,6 @@ function App() {
         <Route path="/register" element={<Registration />} />
       </Routes>
     </Router>
-
-    // <div>
-    //   <Header />
-    //   <main>
-    //     <BrowserRouter>
-    //       <Routes>
-    //         <Route path="/" element={<HomePage/>} />
-    //         <Route path="/login" element={<Login/>} />
-    //         <Route path="/register" element={<Register/>} />
-    //         <Route path="/rooms" element={<RoomPage/>} />
-    //         <Route path="/booking/:id" element={<Booking/>} />
-    //         {/* <Route path="/about" element={<AboutPage/>} /> */}
-    //         {/* <Route path="/contact" element={<ContactPage/>} /> */}
-    //         {/* <Route path="/login" element={<LoginPage/>} /> */}
-    //         {/* <Route path="/register" element={<RegisterPage/>} />  */}
-    //       </Routes>
-    //     </BrowserRouter>
-    //   </main>
-    //   <Footer />
-    // </div>
 
   );
 }

@@ -14,6 +14,7 @@ const User = require('./model/User');
 const RoomCategory = require('./model/RoomCategory');
 const Room = require('./model/Room');
 const Booking = require('./model/Booking')
+const Gallery = require('./model/Gallery')
 
 const corsOptions = {
     origin: 'http://localhost:3000', // Allow only this origin
@@ -47,57 +48,47 @@ const upload = multer({ storage: storage });
 app.use("/uploads", express.static("uploads"))
   
 // Registration 
-app.post('/registration', async(req, res) => {
-    try {
-        // get all data from body
-        const {name, phone, address, city, state, country, dateOfBirth, email, password, role} = req.body
+app.post('/registration', upload.single('image'), async (req, res) => {
+  try {
+    const { name, phone, address, city, state, country, dateOfBirth, email, password, role } = req.body;
+    const image = req.file ? req.file.filename : null;
 
-        if(!(name && phone && address && city && state && country && dateOfBirth && email && password && role)){
-            return res.status(400).send("All fields are compulsory")
-        }
-
-        // check user already exits - email
-        const existingUser = await User.findOne({email})
-        if(existingUser){
-            return res.status(401).send("User already exists with this Email");
-        }
-
-        // encrypt the password
-        const myEncPassword = await bcrypt.hash(password, 10)
-
-        //save User in Db
-        const user = await User.create({
-            name, 
-            phone, 
-            address, 
-            city, 
-            state, 
-            country, 
-            dateOfBirth, 
-            email, 
-            password: myEncPassword, 
-            role
-        })
-
-        // generate a token for user and send it
-        const token = jwt.sign(
-            {id: user._id, email},
-            "vvaapp", //process.env.jwtsecret
-            {
-                expiresIn: '2h'
-            }
-        )
-
-        user.token = token
-        user.password = undefined
-
-        return res.status(201).send(user)
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send("Internal Server Error");
+    if (!(name && phone && address && city && state && country && dateOfBirth && email && password && role)) {
+      return res.status(400).send("All fields are compulsory");
     }
-})
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(401).send("User already exists with this Email");
+    }
+
+    const myEncPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      phone,
+      address,
+      city,
+      state,
+      country,
+      dateOfBirth,
+      email,
+      password: myEncPassword,
+      role,
+      image
+    });
+
+    const token = jwt.sign({ id: user._id, email }, "vvaapp", { expiresIn: '2h' });
+
+    user.token = token;
+    user.password = undefined;
+
+    return res.status(201).send(user);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
+});
 
 // Login
 app.post('/login', async(req, res) => {
@@ -177,40 +168,67 @@ app.get('/user/:id',  async(req, res) => {
 })
  
 // Update User
-app.put('/user/:id',  async(req, res) => {
-    const userId = req.params.id
-    const { name, phone, address, city, state, country, dateOfBirth, email, password, role } = req.body
-    try {
-        // encrypt the password
-        const myEncPassword = await bcrypt.hash(password, 10)
-        
-        const updateUser = await User.findByIdAndUpdate(
-            userId,
-            { name, phone, address, city, state, country, dateOfBirth, email, password: myEncPassword, role },
-            { new: true }
-        )
+app.put('/user/:id', upload.single('image'), async (req, res) => {
+  const userId = req.params.id;
+  const { name, phone, address, city, state, country, dateOfBirth, email, password, role } = req.body;
 
-        if(!updateUser){
-          return res.status(404).send('User not found')
-        }
-        res.status(200).json(updateUser)
-    } catch (error) {
-        console.log(error);
-        res.status(500).json(error)
+  try {
+    const updateFields = { name, phone, address, city, state, country, dateOfBirth, email, role };
+
+    if (password) {
+      const myEncPassword = await bcrypt.hash(password, 10);
+      updateFields.password = myEncPassword;
     }
-})
+
+    if (req.file) {
+      updateFields.image = req.file.filename;
+    }
+
+    const updateUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+
+    if (!updateUser) {
+      return res.status(404).send({ msg: 'User not found' });
+    }
+
+    res.status(200).json(updateUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
  
 // Delete User
 app.delete('/user/:id',  async(req, res) => {
-    try {
-        const deleteUser = await User.findByIdAndDelete(req.params.id)
-        if(!deleteUser){
-            res.status(404).send('User not found')
-        }
-        res.status(200).send('User delete Successfully')
-    } catch (error) {
-        res.status(500).send(error)
+  const userId = req.params.id;
+  try {
+    // Find the category by id
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
     }
+
+    // Get the image file path
+    const imagePath = path.join(__dirname, 'uploads', user.image);
+
+    // Delete the category from the database
+    await User.findByIdAndDelete(userId);
+
+    // Check if the image file exists and delete it
+    if (fs.existsSync(imagePath)) {
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error('Error deleting image file:', err);
+        } else {
+          console.log('Image file deleted:', imagePath);
+        }
+      });
+    }
+
+    res.status(200).json({ msg: 'User and image deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Server error' });
+  }
 })
 
 // Add new Category
@@ -302,7 +320,6 @@ app.put('/roomCategory/:id', upload.single('image'), async (req, res) => {
 // Delete Category
 app.delete('/roomCategory/:id', async (req, res) => {
     const categoryId = req.params.id;
-  
     try {
       // Find the category by id
       const category = await RoomCategory.findById(categoryId);
@@ -333,7 +350,6 @@ app.delete('/roomCategory/:id', async (req, res) => {
       res.status(500).json({ msg: 'Server error' });
     }
   });
-
 
 app.post('/room', async (req, res) => {
     try {
@@ -449,7 +465,6 @@ app.post('/availableRoom', async (req, res) => {
       res.status(500).json({ message: error.message });
     }
 });
-
  
 // Booking Room
 app.post('/booking', async(req, res) => {
@@ -559,6 +574,93 @@ app.delete('/booking/:id', async(req, res) => {
     }
 })
 
+// Get all gallery images
+app.get('/gallery', async (req, res) => {
+  try {
+    const gallery = await Gallery.find(); 
+    res.json(gallery);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get Single gallery images
+app.get('/gallery/:id', async (req, res) => {
+  try {
+    const gallery = await Gallery.findById(req.params.id);
+    res.json(gallery);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Add a new gallery image
+app.post('/gallery', upload.single('image'), async (req, res) => {
+  const gallery = new Gallery({
+    imageName: req.file.filename,
+    category: req.body.category,
+    description: req.body.description,
+  });
+  try {
+    const newGallery = await gallery.save();
+    res.status(201).json(newGallery);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+
+// Update a gallery image
+app.put('/gallery/:id', upload.single('image'), async (req, res) => {
+  try {
+    const gallery = await Gallery.findById(req.params.id);
+    if (!gallery) {
+      return res.status(404).json({ message: 'Gallery not found' });
+    }
+    gallery.category = req.body.category || gallery.category;
+    gallery.description = req.body.description || gallery.description;
+    if (req.file) {
+      gallery.imageName = req.file.filename;
+    }
+    const updatedGallery = await gallery.save();
+    res.json(updatedGallery);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+
+// Delete a gallery image
+app.delete('/gallery/:id', async (req, res) => {
+  const imageId = req.params.id;
+    try {
+      // Find the category by id
+      const image = await Gallery.findById(imageId);
+      if (!image) {
+        return res.status(404).json({ msg: 'Image not found' });
+      }
+    // Get the image file path
+    const imagePath = path.join(__dirname, 'uploads', image.imageName);
+    
+    // Delete the category from the database
+    await Gallery.findByIdAndDelete(imageId);
+ 
+     // Check if the image file exists and delete it
+     if (fs.existsSync(imagePath)) {
+       fs.unlink(imagePath, (err) => {
+         if (err) {
+           console.error('Error deleting image file:', err);
+         } else {
+           console.log('Image file deleted:', imagePath);
+         }
+       });
+     }
+ 
+    res.json({ message: 'Gallery image deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 app.listen(3001, () => {
     console.log('Server is Running....');

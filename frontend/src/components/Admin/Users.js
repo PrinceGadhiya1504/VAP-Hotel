@@ -56,6 +56,7 @@ const Users = () => {
           <thead>
             <tr>
               <th style={{ width: '5%' }}>#</th>
+              <th style={{ width: '5%' }}>Image</th>
               <th style={{ width: '5%' }}> Name </th>
               <th style={{ width: '5%' }}> Phone </th>
               <th style={{ width: '5%' }}> Address </th>
@@ -74,6 +75,7 @@ const Users = () => {
               user.map((user, index) => (
                 <tr key={index}>
                   <td style={{ width: '5%' }}>{index + 1}</td>
+                  <td style={{ width: '5%' }}> <img src={`http://localhost:3001/uploads/${user.image}`} alt={user.image} style={{ width: '100px', height: '100px' }} /></td>
                   <td style={{ width: '5%' }}>{user.name}</td>
                   <td style={{ width: '5%' }}>{user.phone}</td>
                   <td style={{ width: '5%' }}>{user.address}</td>

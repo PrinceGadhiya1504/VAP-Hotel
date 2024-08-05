@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     phone: "",
     address: "",
@@ -14,34 +14,61 @@ const Register = () => {
     password: "",
     dateOfBirth: "",
     role: "guest",
+    image: null
   });
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm({
-      ...form,
-      [name]: value,
-    });
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === 'image' && files.length > 0) {
+      const file = files[0];
+      setFormData({
+        ...formData,
+        [name]: file
+      });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:3001/registration', form);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
 
+    const formDataToSend = new FormData();
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
+
+    try {
+      const response = await axios.post('http://localhost:3001/registration', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       if (response.status === 201) {
-        const data = response.data;
-        console.log(data);
-        navigate('/login');
+        setSuccess("Registration Successful");
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 500);
+      } else {
+        alert(response.statusText);
       }
     } catch (error) {
       if (error.response) {
         setError(error.response.data);
       } else {
-        console.error('Error:', error);
-        setError('Something went wrong. Please try again.');
+        setError("Server error...");
       }
     }
   };
@@ -68,8 +95,9 @@ const Register = () => {
     <div style={containerStyle}>
       <div className="card" style={cardStyle}>
         <h2 className="text-center mb-4">Register</h2>
-        {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleSubmit}>
+        {error && <div className='mt-3 alert alert-danger'>{error}</div>}
+        {success && <div className='mt-3 alert alert-success'>{success}</div>}
           <div className="row mb-3">
             <div className="col-md-6">
               <label htmlFor="name" className="form-label">Name</label>
@@ -79,7 +107,7 @@ const Register = () => {
                 type="text"
                 required
                 className="form-control"
-                value={form.name}
+                value={formData.name}
                 onChange={handleChange}
               />
             </div>
@@ -91,7 +119,7 @@ const Register = () => {
                 type="text"
                 required
                 className="form-control"
-                value={form.phone}
+                value={formData.phone}
                 onChange={handleChange}
               />
             </div>
@@ -105,7 +133,7 @@ const Register = () => {
                 type="text"
                 required
                 className="form-control"
-                value={form.address}
+                value={formData.address}
                 onChange={handleChange}
               />
             </div>
@@ -117,7 +145,7 @@ const Register = () => {
                 type="text"
                 required
                 className="form-control"
-                value={form.city}
+                value={formData.city}
                 onChange={handleChange}
               />
             </div>
@@ -131,7 +159,7 @@ const Register = () => {
                 type="text"
                 required
                 className="form-control"
-                value={form.state}
+                value={formData.state}
                 onChange={handleChange}
               />
             </div>
@@ -143,7 +171,7 @@ const Register = () => {
                 type="text"
                 required
                 className="form-control"
-                value={form.country}
+                value={formData.country}
                 onChange={handleChange}
               />
             </div>
@@ -157,7 +185,7 @@ const Register = () => {
                 type="date"
                 required
                 className="form-control"
-                value={form.dateOfBirth}
+                value={formData.dateOfBirth}
                 onChange={handleChange}
               />
             </div>
@@ -169,7 +197,7 @@ const Register = () => {
                 type="email"
                 required
                 className="form-control"
-                value={form.email}
+                value={formData.email}
                 onChange={handleChange}
               />
             </div>
@@ -183,9 +211,26 @@ const Register = () => {
                 type="password"
                 required
                 className="form-control"
-                value={form.password}
+                value={formData.password}
                 onChange={handleChange}
               />
+            </div>
+            <div className="col-md-6">
+            <label htmlFor="image">Image</label>
+            <input
+              type="file"
+              className="form-control"
+              id="image"
+              name="image"
+              onChange={handleChange}
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{ width: '100px', height: '100px', marginLeft: '10px' }}
+              />
+            )}
             </div>
           </div>
           <button
