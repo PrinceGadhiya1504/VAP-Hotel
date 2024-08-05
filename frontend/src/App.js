@@ -1,7 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import Registration from './components/Register'
 import Login from './components/Login';
+import PageNotFound from './components/PageNotFound';
 import UserLayout from './components/UserLayout';
 import AdminLayout from './components/AdminLayout';
 
@@ -72,6 +74,7 @@ function App() {
         {/* Common Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Registration />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
 

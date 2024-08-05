@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const AvailableRoom = () => {
   const [availableRooms, setAvailableRooms] = useState([]);
+  
   const userId = localStorage.getItem('userId');
   
   const [formData, setFormData] = useState({
