@@ -41,7 +41,7 @@ const Gallery = () => {
     <select name="" id="">
       <option value="">ID</option>
     </select> */}
-    <Link to="/admin/addImage"><button>Add Image</button></Link>
+    <Link to="/addImage"><button>Add Image</button></Link>
   </div>
 
   <div className="browse">
@@ -70,7 +70,7 @@ const Gallery = () => {
           <td style={{ width: '10%' }}> <img src={`http://localhost:3001/uploads/${img.imageName}`} alt={img.name} style={{ width: '100px', height: '100px' }} /></td>
           <td style={{ width: '5%' }}>{img.category}</td>
           <td style={{ width: '5%' }}>
-            <Link to={`/admin/editGallery/${img._id}`}><button className='editButton'>Edit</button></Link>
+            <Link to={`/editGallery/${img._id}`}><button className='editButton'>Edit</button></Link>
             <button onClick={() => deleteImage(img._id)} className='deleteButton'>Delete</button>
           </td>
         </tr>

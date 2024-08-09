@@ -35,6 +35,7 @@ const AddRoom = () => {
     fetchCategories();
   }, []);
 console.log(categories);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("")

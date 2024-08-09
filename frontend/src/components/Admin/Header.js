@@ -30,37 +30,37 @@ const Header = () => {
                         </Link>
                     </li> */}
               <li>
-                <Link to="/admin/category">
+                <Link to="category">
                   <span className="las la-user-alt"></span>
                   <small>Category</small>
                 </Link>
               </li>
               <li>
-                <Link to="/admin/rooms">
+                <Link to="rooms">
                   <span className="las la-user-alt"></span>
                   <small>Rooms</small>
                 </Link>
               </li>
               <li>
-                <Link to="/admin/bookings">
+                <Link to="bookings">
                   <span className="las la-envelope"></span>
                   <small>Booking</small>
                 </Link>
               </li>
               <li>
-                <Link to="/admin/users">
+                <Link to="users">
                   <span className="las la-clipboard-list"></span>
                   <small>Users</small>
                 </Link>
               </li>
               <li>
-                <Link to="/admin/payments">
+                <Link to="payments">
                   <span className="las la-shopping-cart"></span>
                   <small>Payments</small>
                 </Link>
               </li>
               <li>
-                <Link to="/admin/gallery">
+                <Link to="gallery">
                   <span className="las la-tasks"></span>
                   <small>Gallery</small>
                 </Link>

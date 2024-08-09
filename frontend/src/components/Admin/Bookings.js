@@ -84,7 +84,7 @@ const Bookings = () => {
                   <td style={{ width: '5%' }}>{booking.numberOfGuests}</td>
                   <td style={{ width: '15%' }}>{booking.specialRequests}</td>
                   <td style={{ width: '10%' }}>
-                    <Link to={`/admin/editBooking/${booking._id}`}><button className='editButton'>Edit</button></Link>
+                    <Link to={`/editBooking/${booking._id}`}><button className='editButton'>Edit</button></Link>
                     <button onClick={() => deleteBooking(booking._id)} className='deleteButton'>Delete</button>
                   </td>
                 </tr>

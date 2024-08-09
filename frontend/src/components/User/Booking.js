@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
 
 const Booking = () => {
   const userId = localStorage.getItem('userId');
@@ -9,7 +10,8 @@ const Booking = () => {
   const [room, setRoom] = useState({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     userId: userId,
     roomId: id,
@@ -24,7 +26,6 @@ const Booking = () => {
     axios.get(`http://localhost:3001/room/${id}`)
       .then(res => {
         setRoom(res.data);
-        console.log(res.data);
         calculateTotalPrice(
           new Date(formData.checkInDate),
           new Date(formData.checkOutDate),
@@ -33,11 +34,12 @@ const Booking = () => {
       })
       .catch(error => {
         console.error('Error fetching room:', error);
+        setError('Unable to fetch room details. Please try again later.');
       });
   }, [id, formData.checkInDate, formData.checkOutDate]);
 
   const calculateTotalPrice = (checkIn, checkOut, pricePerNight) => {
-    if (checkIn && checkOut) {
+    if (checkIn && checkOut && !isNaN(checkIn) && !isNaN(checkOut)) {
       const timeDifference = checkOut - checkIn;
       const numberOfDays = timeDifference / (1000 * 3600 * 24);
       const totalPrice = pricePerNight * numberOfDays;
@@ -45,6 +47,8 @@ const Booking = () => {
         ...prevData,
         totalPrice: totalPrice.toFixed(2),
       }));
+    } else {
+      setError('Invalid check-in or check-out date.');
     }
   };
 
@@ -53,37 +57,65 @@ const Booking = () => {
     setFormData(prevData => ({
       ...prevData,
       [name]: value,
-    }), () => {
-      if (name === 'checkInDate' || name === 'checkOutDate') {
-        calculateTotalPrice(
-          new Date(formData.checkInDate),
-          new Date(formData.checkOutDate),
-          room.price
-        );
-      }
-    });
+    }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const makePayment = async () => {
+    setLoading(true);
     setError("");
+    setSuccess("");
+
     try {
-      console.log(formData);
-      const response = await axios.post('http://localhost:3001/booking', formData);
-      if (response.status === 201) {
-        setSuccess("Booking Successfully");
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1000);
+      // Step 1: Create the booking
+      const bookingResponse = await fetch("http://localhost:3001/booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!bookingResponse.ok) {
+        throw new Error("Failed to create booking");
+      }
+
+      const { bookingId } = await bookingResponse.json();
+
+      // Step 2: Create a checkout session
+      const stripe = await loadStripe("pk_test_51PkNRDP769pZvV3qcj4JeG7ixz8pLDBwln4uYlPjcDrH0l1gpJhZYi0oAFyZQi32nrvfV4x9SEsELwAB36O7BzTp00Kp4LTRl1");
+
+      const sessionResponse = await fetch("http://localhost:3001/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          booking: { ...formData, _id: bookingId }
+        }),
+      });
+
+      if (!sessionResponse.ok) {
+        throw new Error("Failed to create checkout session");
+      }
+
+      const session = await sessionResponse.json();
+      
+      // Redirect to checkout
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+
+      if (result.error) {
+        console.error(result.error.message);
+        setError(result.error.message);
       } else {
-        alert(response.statusText);
+        setSuccess("Redirecting to payment gateway...");
       }
     } catch (error) {
-      if (error.response) {
-        setError(error.response.data.msg);
-      } else {
-        setError("Server Error.....");
-      }
+      console.error("Error during payment:", error);
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,10 +123,10 @@ const Booking = () => {
     <div className="Admincontainer">
       <div className="card m-5">
         <h2 className="card-header">Booking Room</h2>
-        <form onSubmit={handleSubmit} className="card-body">
+        <form className="card-body">
           {error && <div className='alert alert-danger'>{error}</div>}
           {success && <div className='alert alert-success'>{success}</div>}
-          
+
           <div className="form-group">
             <label htmlFor="roomNumber">Room Number</label>
             <input
@@ -156,7 +188,9 @@ const Booking = () => {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary">Book Room</button>
+          <button type="button" className="btn btn-primary" onClick={makePayment} disabled={loading}>
+            {loading ? "Processing..." : "Book Room"}
+          </button>
         </form>
       </div>
     </div>

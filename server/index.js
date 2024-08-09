@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const auth = require('./middleware/auth');
 
+const stripe = require("stripe")("sk_test_51PkNRDP769pZvV3q1MoGHrVoCTHzDHPVFiECESByknun4qzUbP4nzrwnlOh50ZB5CAoc5Hw8HvfdjELCIswAoRXE00TBuam5dD")
+
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -14,20 +16,21 @@ const User = require('./model/User');
 const RoomCategory = require('./model/RoomCategory');
 const Room = require('./model/Room');
 const Booking = require('./model/Booking')
-const Gallery = require('./model/Gallery')
+const Gallery = require('./model/Gallery');
+const Payment = require('./model/Payment');
 
 const corsOptions = {
-    origin: 'http://localhost:3000', // Allow only this origin
-    credentials: true, // Allow cookies to be sent
-  };
- 
+  origin: 'http://localhost:3000', // Allow only this origin
+  credentials: true, // Allow cookies to be sent
+};
+
 const app = express()
 app.use(express.json())
 app.use(cookieParser());
 app.use(cors(corsOptions))
 
 mongoose.connect("mongodb+srv://PrinceGadhiya:123@merndb.eyezfe8.mongodb.net/VAP-Hotel")
- 
+
 
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -46,7 +49,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 app.use("/uploads", express.static("uploads"))
-  
+
 // Registration 
 app.post('/registration', upload.single('image'), async (req, res) => {
   try {
@@ -91,82 +94,82 @@ app.post('/registration', upload.single('image'), async (req, res) => {
 });
 
 // Login
-app.post('/login', async(req, res) => {
-    try {
-         // get all data from frontend
-        const { email, password } = req.body
+app.post('/login', async (req, res) => {
+  try {
+    // get all data from frontend
+    const { email, password } = req.body
 
-        // validation
-        if (!(email && password)) { 
-            return res.status(400).send("Send all data");
-        }
-
-        // find user in DB
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(401).send("User not found");
-        }
-
-        // match the password
-        if (user && (await bcrypt.compare(password, user.password))) {
-            const token = jwt.sign(
-            { id: user._id },
-            "vvaapp", //process.env.jwtsecret
-            { 
-                expiresIn: "2h",
-            }
-            );
-
-        user.token = token;
-        user.password = undefined;
-  
-        // send a token in user cookie
-        // cookie section
-        const options = {
-            //expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
-            expires: new Date(Date.now() + 60 * 60 * 1000),
-            // httpOnly: true
-        };
-  
-        return res.status(200).cookie("token", token, options).json({
-          success: true,
-          token,
-          user,
-        });
-
-      } else {
-        return res.status(401).send("Invalid credentials");
-      }
-    } catch (error) {
-        console.log(error);
-      return res.status(500).send("Internal Server Error");
+    // validation
+    if (!(email && password)) {
+      return res.status(400).send("Send all data");
     }
+
+    // find user in DB
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).send("User not found");
+    }
+
+    // match the password
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const token = jwt.sign(
+        { id: user._id },
+        "vvaapp", //process.env.jwtsecret
+        {
+          expiresIn: "2h",
+        }
+      );
+
+      user.token = token;
+      user.password = undefined;
+
+      // send a token in user cookie
+      // cookie section
+      const options = {
+        //expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + 60 * 60 * 1000),
+        // httpOnly: true
+      };
+
+      return res.status(200).cookie("token", token, options).json({
+        success: true,
+        token,
+        user,
+      });
+
+    } else {
+      return res.status(401).send("Invalid credentials");
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
 
 })
 
 // Get All Users
-app.get('/users',  async(req, res) => {
-    try {
-        const users = await User.find()
-        res.status(200).json(users)
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send("Internal Server Error");
-    }
+app.get('/users', async (req, res) => {
+  try {
+    const users = await User.find()
+    res.status(200).json(users)
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
 })
 
 // Get Single User By Id    
-app.get('/user/:id',  async(req, res) => {
-    const userId = req.params.id
-    try {
-        const users = await User.findById(userId)
-        res.status(200).json(users)
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send("Internal Server Error");
-    }
+app.get('/user/:id', async (req, res) => {
+  const userId = req.params.id
+  try {
+    const users = await User.findById(userId)
+    res.status(200).json(users)
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
 })
- 
+
 // Update User
 app.put('/user/:id', upload.single('image'), async (req, res) => {
   const userId = req.params.id;
@@ -196,9 +199,9 @@ app.put('/user/:id', upload.single('image'), async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
- 
+
 // Delete User
-app.delete('/user/:id',  async(req, res) => {
+app.delete('/user/:id', async (req, res) => {
   const userId = req.params.id;
   try {
     // Find the category by id
@@ -232,352 +235,338 @@ app.delete('/user/:id',  async(req, res) => {
 })
 
 // Add new Category
-app.post('/roomCategory',upload.single('image'), async(req, res) => {
-    try {
-        const { name, price, maxPerson, facilities, description } = req.body
-        const image = req.file ? req.file.filename : null;
+app.post('/roomCategory', upload.single('image'), async (req, res) => {
+  try {
+    const { name, price, maxPerson, facilities, description } = req.body
+    const image = req.file ? req.file.filename : null;
 
-        if(!(name && price && maxPerson && facilities && description && image)){
-            res.status(400).send("All fields are Require")
-        }
-        // check Room already exitst - roomNumber
-        const existingRoom = await RoomCategory.findOne({name})
-        if(existingRoom){
-            return res.status(401).send({msg:`Category already exists with ${name} Name`});
-        }
-        const newCategory = await RoomCategory.create({
-            name,    
-            price, 
-            maxPerson, 
-            facilities, 
-            description,
-            image
-        }) 
-        res.status(201).send(newCategory)
-
-    } catch (error) {
-        res.status(500).send(error)
+    if (!(name && price && maxPerson && facilities && description && image)) {
+      res.status(400).send("All fields are Require")
     }
-}) 
+    // check Room already exitst - roomNumber
+    const existingRoom = await RoomCategory.findOne({ name })
+    if (existingRoom) {
+      return res.status(401).send({ msg: `Category already exists with ${name} Name` });
+    }
+    const newCategory = await RoomCategory.create({
+      name,
+      price,
+      maxPerson,
+      facilities,
+      description,
+      image
+    })
+    res.status(201).send(newCategory)
+
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
 
 // Get All Category
-app.get('/roomCategory',  async(req, res) => {
-    try {
-        const category = await RoomCategory.find()
-        res.status(200).json(category)
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send("Internal Server Error");
-    }
+app.get('/roomCategory', async (req, res) => {
+  try {
+    const category = await RoomCategory.find()
+    res.status(200).json(category)
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
 })
 
 // Get Single Category By Id
-app.get('/roomCategory/:id',  async(req, res) => {
-    const categoryId = req.params.id
-    try {
-        const category = await RoomCategory.findById(categoryId)
-        if(!category){
-            return res.status(404).send('Category not found')
-        }
-        res.status(200).json(category)
-        console.log(category);
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send("Internal Server Error");
+app.get('/roomCategory/:id', async (req, res) => {
+  const categoryId = req.params.id
+  try {
+    const category = await RoomCategory.findById(categoryId)
+    if (!category) {
+      return res.status(404).send('Category not found')
     }
+    res.status(200).json(category)
+    console.log(category);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
 })
 
 // Update Category Route
 app.put('/roomCategory/:id', upload.single('image'), async (req, res) => {
-    const categoryId = req.params.id;
-    const { name, price, maxPerson, facilities, description } = req.body;
-  
-    try {
-      const updateFields = { name, price, maxPerson, facilities, description };
-  
-      if (req.file) {
-        updateFields.image = req.file.filename;
-      }
-  
-      const updatedCategory = await RoomCategory.findByIdAndUpdate(
-        categoryId,
-        updateFields,
-        { new: true }
-      );
-  
-      if (!updatedCategory) {
-        return res.status(404).send({ msg: 'Category not found' });
-      }
-  
-      res.status(200).json(updatedCategory);
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ msg: 'Server error' });
+  const categoryId = req.params.id;
+  const { name, price, maxPerson, facilities, description } = req.body;
+
+  try {
+    const updateFields = { name, price, maxPerson, facilities, description };
+
+    if (req.file) {
+      updateFields.image = req.file.filename;
     }
-  });
+
+    const updatedCategory = await RoomCategory.findByIdAndUpdate(
+      categoryId,
+      updateFields,
+      { new: true }
+    );
+
+    if (!updatedCategory) {
+      return res.status(404).send({ msg: 'Category not found' });
+    }
+
+    res.status(200).json(updatedCategory);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 
 // Delete Category
 app.delete('/roomCategory/:id', async (req, res) => {
-    const categoryId = req.params.id;
-    try {
-      // Find the category by id
-      const category = await RoomCategory.findById(categoryId);
-      if (!category) {
-        return res.status(404).json({ msg: 'Category not found' });
-      }
-  
-      // Get the image file path
-      const imagePath = path.join(__dirname, 'uploads', category.image);
-  
-      // Delete the category from the database
-      await RoomCategory.findByIdAndDelete(categoryId);
-  
-      // Check if the image file exists and delete it
-      if (fs.existsSync(imagePath)) {
-        fs.unlink(imagePath, (err) => {
-          if (err) {
-            console.error('Error deleting image file:', err);
-          } else {
-            console.log('Image file deleted:', imagePath);
-          }
-        });
-      }
-  
-      res.status(200).json({ msg: 'Category and image deleted successfully' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ msg: 'Server error' });
+  const categoryId = req.params.id;
+  try {
+    // Find the category by id
+    const category = await RoomCategory.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({ msg: 'Category not found' });
     }
-  });
+
+    // Get the image file path
+    const imagePath = path.join(__dirname, 'uploads', category.image);
+
+    // Delete the category from the database
+    await RoomCategory.findByIdAndDelete(categoryId);
+
+    // Check if the image file exists and delete it
+    if (fs.existsSync(imagePath)) {
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error('Error deleting image file:', err);
+        } else {
+          console.log('Image file deleted:', imagePath);
+        }
+      });
+    }
+
+    res.status(200).json({ msg: 'Category and image deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 
 app.post('/room', async (req, res) => {
-    try {
-      const { roomNumber, roomCategoryId, status } = req.body;
-      if (!(roomNumber && roomCategoryId)) {
-        return res.status(400).send("All fields are required");
-      }
-      // Check if the room already exists
-      const existingRoom = await Room.findOne({ roomNumber });
-      if (existingRoom) {
-        return res.status(401).send({msg:`Room already exists with room number ${roomNumber}`});
-      }
-      // Create new room
-      const newRoom = await Room.create({
-        roomNumber,
-        roomCategoryId,
-        status
-      });
-      res.status(201).send(newRoom);
-    } catch (error) {
-      res.status(500).send(error.message);
+  try {
+    const { roomNumber, roomCategoryId, status } = req.body;
+    if (!(roomNumber && roomCategoryId)) {
+      return res.status(400).send("All fields are required");
     }
-  });
-  
+    // Check if the room already exists
+    const existingRoom = await Room.findOne({ roomNumber });
+    if (existingRoom) {
+      return res.status(401).send({ msg: `Room already exists with room number ${roomNumber}` });
+    }
+    // Create new room
+    const newRoom = await Room.create({
+      roomNumber,
+      roomCategoryId,
+      status
+    });
+    res.status(201).send(newRoom);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 // Get All Rooms
-app.get('/rooms', async(req, res) => {
-    try {
-        const allRooms = await Room.find().populate('roomCategoryId', 'name price maxPerson facilities description')
-        res.status(200).json(allRooms)
-    } catch (error) {
-        res.status(500).send(error)
-    }
-}) 
+app.get('/rooms', async (req, res) => {
+  try {
+    const allRooms = await Room.find().populate('roomCategoryId', 'name price maxPerson facilities description')
+    res.status(200).json(allRooms)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
 
 // Get Single Rooms
-app.get('/room/:id',  async(req, res) => {
-    // console.log(req.params.id);
-    try {
-        const room = await Room.findById(req.params.id).populate('roomCategoryId')
-        // console.log(room);
-        if(!room){
-            return res.status(404).send('Room not found')
-        }
-        res.status(200).json(room)
-    } catch (error) {
-        res.status(500).send(error)
+app.get('/room/:id', async (req, res) => {
+  // console.log(req.params.id);
+  try {
+    const room = await Room.findById(req.params.id).populate('roomCategoryId')
+    // console.log(room);
+    if (!room) {
+      return res.status(404).send('Room not found')
     }
+    res.status(200).json(room)
+  } catch (error) {
+    res.status(500).send(error)
+  }
 })
 
 // Update Room 
 app.put('/room/:id', async (req, res) => {
-    const roomId = req.params.id;
-    const { roomNumber, roomCategoryId, status } = req.body;
-    try {
-      const updateRoom = await Room.findByIdAndUpdate(
-        roomId,
-        { roomNumber, roomCategoryId, status },
-        { new: true }
-      );
-      if (!updateRoom) {
-        return res.status(404).send({msg:'Room Not Found'});
-      }
-      res.status(200).send(updateRoom);
+  const roomId = req.params.id;
+  const { roomNumber, roomCategoryId, status } = req.body;
+  try {
+    const updateRoom = await Room.findByIdAndUpdate(
+      roomId,
+      { roomNumber, roomCategoryId, status },
+      { new: true }
+    );
+    if (!updateRoom) {
+      return res.status(404).send({ msg: 'Room Not Found' });
+    }
+    res.status(200).send(updateRoom);
     //console.log(updateRoom);
-    } catch (error) {
-      res.status(500).send(error);
-    }
-  });
- 
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 // Delete Room 
-app.delete('/room/:id', async(req, res) => {
-    try {
-        const deleteRoom = await Room.findByIdAndDelete(req.params.id)
-        if(!deleteRoom){
-            res.status(404).send({msg:'User not found'})
-        }
-        res.status(200).send('Room delete Successfully')
-    } catch (error) {
-        res.status(500).send(error)
+app.delete('/room/:id', async (req, res) => {
+  try {
+    const deleteRoom = await Room.findByIdAndDelete(req.params.id)
+    if (!deleteRoom) {
+      res.status(404).send({ msg: 'User not found' })
     }
+    res.status(200).send('Room delete Successfully')
+  } catch (error) {
+    res.status(500).send(error)
+  }
 })
 
 // AvailableRoom Rooms 
 app.post('/availableRoom', async (req, res) => {
-    const { checkInDate, checkOutDate } = req.body.formData;
-  
-    try {
-      // Convert dates to JavaScript Date objects
-      const checkIn = new Date(checkInDate);
-      const checkOut = new Date(checkOutDate);
-  
-      // Find all bookings that overlap with the provided dates
-      const bookings = await Booking.find({
-        $or: [
-          {
-            checkInDate: { $lt: checkOut },
-            checkOutDate: { $gt: checkIn }
-          }
-        ]
-      }).select('roomId');
-  
-      // Extract room IDs that are already booked
-      const bookedRoomIds = bookings.map(booking => booking.roomId);
-  
-      // Find all rooms that are not booked during the specified period
-      const availableRooms = await Room.find({
-        _id: { $nin: bookedRoomIds },
-        // status: 'available'
-      }).populate('roomCategoryId', 'name price maxPerson facilities description');
-  
-      res.status(200).json(availableRooms);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-});
- 
-// Booking Room
-app.post('/booking', async(req, res) => {
-    try{
-        const { userId, roomId, checkInDate, checkOutDate, status, totalPrice, specialRequests } = req.body
-        // const totalPrice = req.body.totalPrice
+  const { checkInDate, checkOutDate } = req.body.formData;
 
-        // console.log( userId, roomId, checkInDate, checkOutDate, status, totalPrice, specialRequests );
-        // console.log( totalPrice );
-        
+  try {
+    // Convert dates to JavaScript Date objects
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
 
-        // Check if the room is available
-        const room = await Room.findById(roomId)
-        if (!room) {
-            return res.status(404).send({msg:"Room not found"});
+    // Find all bookings that overlap with the provided dates
+    const bookings = await Booking.find({
+      $or: [
+        {
+          checkInDate: { $lt: checkOut },
+          checkOutDate: { $gt: checkIn }
         }
-        // if (room.status === 'booked') {
-        //     return res.status(400).send({msg:"Room is already booked"});
-        // }
+      ]
+    }).select('roomId');
 
-        const newBooking = await Booking.create({
-            userId,
-            roomId,
-            checkInDate,
-            checkOutDate,
-            status: 'pending', 
-            totalPrice,
-            specialRequests,
-            // numberOfGuests
-        })
-    
-        // Update Room status
-        room.status = 'booked'
-        await room.save()
-    
-        res.status(201).send(newBooking)
-    
-    } catch (error) {
-        res.status(500).json(error.message);
-    }
-})
+    // Extract room IDs that are already booked
+    const bookedRoomIds = bookings.map(booking => booking.roomId);
 
-// Get All Booking Rooms 
-app.get('/bookings', async(req, res) => {
-    try {
-        const allbokings = await Booking.find().populate('userId').populate('roomId');
-      res.status(200).json(allbokings);
-    } catch (error) {
-        res.status(500).json(error.message)
-    }
+    // Find all rooms that are not booked during the specified period
+    const availableRooms = await Room.find({
+      _id: { $nin: bookedRoomIds },
+      // status: 'available'
+    }).populate('roomCategoryId', 'name price maxPerson facilities description');
+
+    res.status(200).json(availableRooms);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Create a new booking
+app.post('/booking', async (req, res) => {
+  const bookingData = req.body;
+
+  if (!bookingData.userId || !bookingData.roomId || !bookingData.checkInDate || !bookingData.checkOutDate || !bookingData.totalPrice) {
+    return res.status(400).send("Invalid booking details");
+  }
+
+  try {
+    const newBooking = new Booking({
+      userId: bookingData.userId,
+      roomId: bookingData.roomId,
+      checkInDate: bookingData.checkInDate,
+      checkOutDate: bookingData.checkOutDate,
+      totalPrice: bookingData.totalPrice,
+      specialRequests: bookingData.specialRequests,
+      status: 'pending', // Mark as pending until payment is confirmed
+    });
+
+    await newBooking.save();
+
+    res.json({ bookingId: newBooking._id });
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    res.status(500).send("Error creating booking");
+  }
+});
+
+app.get('/bookings', async (req, res) => {
+  try {
+    const allbokings = await Booking.find().populate('userId').populate('roomId');
+    res.status(200).json(allbokings);
+  } catch (error) {
+    res.status(500).json(error.message)
+  }
 })
 
 // Get Single Booking Room
-app.get('/booking/:id', async(req, res) => {
-    try {
-        const booking = await Booking.findById(req.params.id).populate('userId').populate('roomId')
-        if(!booking){
-            return res.status(404).send('Booking not found')
-        }
-        res.status(200).send(booking)
-    } catch (error) {
-        res.status(500).json(error.message)
+app.get('/booking/:id', async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate('userId').populate('roomId')
+    if (!booking) {
+      return res.status(404).send('Booking not found')
     }
+    res.status(200).send(booking)
+  } catch (error) {
+    res.status(500).json(error.message)
+  }
 })
 
 // Update Booking 
-app.put('/booking/:id', async(req, res) => {
-    try {
-        const {status} = req.body
-        const updateBooking = await Booking.findByIdAndUpdate(
-            req.params.id,
-            req.body, 
-            {new: true}
-        )
-        if(!updateBooking){
-            res.status(404).send({msg:'Booking Not Found.'})
-        }
-        if(status === 'cancelled'){
-            const room = await Room.findById(updateBooking.roomId)
-            room.status = 'available'
-            await room.save()
-        }
-        res.status(200).json(updateBooking);
-    } catch (error) {
-        res.status(500).send(error.message);
+app.put('/booking/:id', async (req, res) => {
+  try {
+    const { status } = req.body
+    const updateBooking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    )
+    if (!updateBooking) {
+      res.status(404).send({ msg: 'Booking Not Found.' })
     }
+    if (status === 'cancelled') {
+      const room = await Room.findById(updateBooking.roomId)
+      room.status = 'available'
+      await room.save()
+    }
+    res.status(200).json(updateBooking);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 })
 
 // Delete Booking
-app.delete('/booking/:id', async(req, res) => {
-    try {
+app.delete('/booking/:id', async (req, res) => {
+  try {
 
-        const deletedBooking = await Booking.findByIdAndDelete(req.params.id)
+    const deletedBooking = await Booking.findByIdAndDelete(req.params.id)
 
-        if (!deletedBooking) {
-            return res.status(404).send('Booking not found');
-        }
-
-        const room = await Room.findById(deletedBooking.roomId)
-        room.status = 'available'
-        await room.save() 
-
-        res.status(200).send('Booking cancelled successfully');
-
-    } catch (error) {
-        res.status(500).send(error.message);
+    if (!deletedBooking) {
+      return res.status(404).send('Booking not found');
     }
+
+    const room = await Room.findById(deletedBooking.roomId)
+    room.status = 'available'
+    await room.save()
+
+    res.status(200).send('Booking cancelled successfully');
+
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 })
 
 // Get all gallery images
 app.get('/gallery', async (req, res) => {
   try {
-    const gallery = await Gallery.find(); 
+    const gallery = await Gallery.find();
     res.json(gallery);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -633,35 +622,121 @@ app.put('/gallery/:id', upload.single('image'), async (req, res) => {
 // Delete a gallery image
 app.delete('/gallery/:id', async (req, res) => {
   const imageId = req.params.id;
-    try {
-      // Find the category by id
-      const image = await Gallery.findById(imageId);
-      if (!image) {
-        return res.status(404).json({ msg: 'Image not found' });
-      }
+  try {
+    // Find the category by id
+    const image = await Gallery.findById(imageId);
+    if (!image) {
+      return res.status(404).json({ msg: 'Image not found' });
+    }
     // Get the image file path
     const imagePath = path.join(__dirname, 'uploads', image.imageName);
-    
+
     // Delete the category from the database
     await Gallery.findByIdAndDelete(imageId);
- 
-     // Check if the image file exists and delete it
-     if (fs.existsSync(imagePath)) {
-       fs.unlink(imagePath, (err) => {
-         if (err) {
-           console.error('Error deleting image file:', err);
-         } else {
-           console.log('Image file deleted:', imagePath);
-         }
-       });
-     }
- 
+
+    // Check if the image file exists and delete it
+    if (fs.existsSync(imagePath)) {
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error('Error deleting image file:', err);
+        } else {
+          console.log('Image file deleted:', imagePath);
+        }
+      });
+    }
+
     res.json({ message: 'Gallery image deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
+// Create a checkout session
+app.post('/create-checkout-session', async (req, res) => {
+  const { booking } = req.body;
+
+  try {
+    // Create a Stripe session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'inr',
+            product_data: {
+              name: `Room Number: ${booking.roomId}`,
+              description: `Check-In Date: ${booking.checkInDate}\nCheck-Out Date: ${booking.checkOutDate}`,
+            },
+            unit_amount: booking.totalPrice * 100, // Convert to the smallest currency unit
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: 'http://localhost:3000/payment-success',
+      cancel_url: 'http://localhost:3000/payment-cancel',
+      client_reference_id: booking._id.toString(), // Attach booking ID for reference
+    });
+
+    res.json({ id: session.id });
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Handle payment success webhook from Stripe
+app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+  
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, 'we_1PlrDTP769pZvV3qfZJyZRmn'); // Replace with your webhook secret key
+    console.log("Webhook received: ", event.type); // Check if this is logged
+  } catch (err) {
+    console.error(`⚠️  Webhook signature verification failed.`, err.message);
+    return res.sendStatus(400);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+
+    console.log("Session object: ", session); // Check if session data is logged
+
+    try {
+      // Retrieve the booking using client_reference_id (which is booking._id)
+      const booking = await Booking.findById(session.client_reference_id);
+
+      if (!booking) {
+        console.error('Booking not found');
+        return res.sendStatus(404); // Send 404 if booking not found
+      }
+
+      // Update booking status to 'confirmed'
+      booking.status = 'confirmed';
+      booking.updatedAt = Date.now();
+      await booking.save();
+
+      // Insert payment record
+      await Payment.create({
+        userId: booking.userId,
+        bookingId: booking._id,
+        amount: session.amount_total / 100, // Convert from smallest unit
+        paymentDate: new Date(),
+        paymentMethod: 'card',
+        status: 'success',
+      });
+
+      console.log("Booking and payment updated successfully");
+
+    } catch (err) {
+      console.error('Error processing payment success:', err);
+    }
+  }
+
+  res.json({ received: true });
+});
+
 app.listen(3001, () => {
-    console.log('Server is Running....');
+  console.log('Server is Running....');
 })

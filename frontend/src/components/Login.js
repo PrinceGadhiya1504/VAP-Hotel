@@ -1,39 +1,25 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// src/components/Login.js
+import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // const [role, setRole] = useState('guest'); // Add role state
   const [error, setError] = useState('');
 
-  const navigate = useNavigate();
+  // Destructure login from the context
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/login', {
-        email,
-        password,
-      }, { withCredentials: true });
-
-      if (response.status === 200) {
-        const { user } = response.data;
-        localStorage.setItem('userId', user._id);
-        console.log(user._id);
-        alert('Login successful!');
-        console.log(user.role);
-        if (user.role === 'guest') {
-          navigate('/'); // Redirect to home page
-        } else {
-          navigate('/admin'); // Redirect to Admin page
-        }
-      } else {
-        navigate('/admin'); // Redirect to admin page if login fails
-      }
+      // await login(email, password, role); // Pass role to login
+      await login(email, password); // Pass role to login
     } catch (error) {
       if (error.response) {
-        setError(error.response.data);
+        setError(error.response.data.message || 'Login failed. Please try again.');
       } else {
         console.error('Error:', error);
         setError('Something went wrong. Please try again.');
@@ -92,6 +78,19 @@ const Login = () => {
               autoComplete='off'
             />
           </div>
+          {/* <div className="mb-3">
+            <label htmlFor="role" className="form-label">Role</label>
+            <select
+              id="role"
+              name="role"
+              className="form-control"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="guest">Guest</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div> */}
           <button
             type="submit"
             className="btn btn-primary w-100"

@@ -41,7 +41,7 @@ const RoomCategory = () => {
             <select name="" id="">
               <option value="">ID</option>
             </select> */}
-            <Link to="/admin/addCategory"><button>Add Category</button></Link>
+            <Link to="/addCategory"><button>Add Category</button></Link>
           </div>
 
           <div className="browse">
@@ -78,7 +78,7 @@ const RoomCategory = () => {
                   <td style={{ width: '5%' }}>{cat.facilities}</td>
                   <td style={{ width: '5%' }}>{cat.description}</td>
                   <td style={{ width: '5%' }}>
-                    <Link to={`/admin/editcategory/${cat._id}`}><button className='editButton'>Edit</button></Link>
+                    <Link to={`/editcategory/${cat._id}`}><button className='editButton'>Edit</button></Link>
                     <button onClick={() => deleteCategory(cat._id)} className='deleteButton'>Delete</button>
                   </td>
                 </tr>
