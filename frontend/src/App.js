@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
@@ -21,7 +20,6 @@ import Blog from './components/User/Blog';
 import Contact from './components/User/Contact';
 
 // Admin Side Routes
-import AdminHome from './components/Admin/Home';
 import RoomCategory from './components/Admin/RoomCategory';
 import AddCategory from './components/Admin/AddCategory';
 import UpdateRoomCategory from './components/Admin/UpdateRoomCategory';
@@ -45,18 +43,18 @@ function App() {
           {/* User Side Routes */}
           <Route path="/" element={<UserLayout />}>
             <Route index element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/rooms" element={<RoomPage />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/availableRoom" element={<AvailableRoom />} />
-            <Route path="/booking/:id" element={<Booking />} />
+            <Route path="about" element={<About />} />
+            <Route path="rooms" element={<RoomPage />} />
+            <Route path="gallery" element={<Gallery />} />
+            <Route path="blog" element={<Blog />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="availableRoom" element={<AvailableRoom />} />
+            <Route path="booking/:id" element={<Booking />} />
           </Route>
 
           {/* Admin Side Routes */}
           <Route
-            path="/admin/*"
+            path="/admin"
             element={
               // <PrivateRoute role="admin">
                 <AdminLayout />
@@ -80,7 +78,6 @@ function App() {
           </Route>
 
           {/* Common Routes */}
-          <Route path="/adminHeader" element={<AdminLayout />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Registration />} />
           <Route path="*" element={<PageNotFound />} />

@@ -468,11 +468,11 @@ app.post('/availableRoom', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
- 
+
 // ReAvailableRoom Rooms 
 app.post('/reAvailableRoom', async (req, res) => {
   const { checkInDate, checkOutDate, roomId } = req.body;
-console.log(roomId);
+  console.log(roomId);
 
   try {
     // Convert dates to JavaScript Date objects
@@ -516,26 +516,8 @@ app.post('/booking', async (req, res) => {
   if (!bookingData.userId || !bookingData.roomId || !bookingData.checkInDate || !bookingData.checkOutDate || !bookingData.totalPrice) {
     return res.status(400).send("Invalid booking details");
   }
-
+ 
   try {
-    // const checkIn = new Date(bookingData.checkInDate);
-    // const checkOut = new Date(bookingData.checkOutDate);
-
-    // // Check for overlapping bookings for the selected room and dates
-    // const overlappingBookings = await Booking.find({
-    //   roomId: bookingData.roomId,
-    //   status: { $ne: 'pending' },
-    //   $or: [
-    //     { checkInDate: { $lt: checkOut }, checkOutDate: { $gt: checkIn } }
-    //   ]
-    // });
-
-    // // If there are overlapping bookings, return a conflict status
-    // if (overlappingBookings.length > 0) {
-    //   return res.status(409).json({ message: "Room is not available for the selected dates" });
-    // }
-
-    // Proceed with creating the new booking if the room is available
     const newBooking = new Booking({
       ...bookingData,
       status: 'pending',

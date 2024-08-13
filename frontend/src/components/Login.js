@@ -56,7 +56,7 @@ const Login = () => {
             <input
               id="email"
               name="email"
-              type="email"
+              type="text"
               required
               className="form-control"
               value={email}

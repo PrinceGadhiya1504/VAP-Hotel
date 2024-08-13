@@ -42,7 +42,7 @@ const Rooms = () => {
             <select name="" id="">
               <option value="">ID</option>
             </select> */}
-            <Link to="/addRoom"><button>Add record</button></Link>
+            <Link to="/admin/addRoom"><button>Add record</button></Link>
           </div>
 
           <div className="browse">

@@ -1,4 +1,3 @@
-// src/context/AuthContext.js
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -7,6 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,6 +24,8 @@ export const AuthProvider = ({ children }) => {
     } else {
       setUser(null);
     }
+
+    setLoading(false); // Set loading to false once data is retrieved
   }, []);
 
   const login = async (email, password) => {
@@ -56,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

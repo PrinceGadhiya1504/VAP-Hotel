@@ -84,11 +84,11 @@ const Booking = () => {
       navigate('/login');
       return;
     }
-  
+
     setLoading(true);
     setError("");
     setSuccess("");
-  
+
     try {
       // Check if the room is available
       const availabilityResponse = await axios.post("http://localhost:3001/reAvailableRoom", {
@@ -96,26 +96,26 @@ const Booking = () => {
         checkOutDate: formData.checkOutDate,
         roomId: formData.roomId,
       });
-  
+
       if (availabilityResponse.status === 200) {
         // Room is available, proceed with booking
         setSuccess(availabilityResponse.data.message);
-  
+
         // Continue with the booking process
         // Uncomment and implement the following lines according to your booking process
-  
+
         const bookingResponse = await axios.post("http://localhost:3001/booking", formData);
         const bookingId = bookingResponse.data.bookingId;
-  
+
         const stripe = await loadStripe("your-stripe-public-key");
-  
+
         const sessionResponse = await axios.post("http://localhost:3001/create-checkout-session", {
           bookingId: bookingId
         });
-  
+
         const sessionId = sessionResponse.data.sessionId;
         const result = await stripe.redirectToCheckout({ sessionId });
-  
+
         if (result.error) {
           console.error(result.error.message);
           setError(result.error.message);
@@ -136,7 +136,7 @@ const Booking = () => {
       setLoading(false);
     }
   };
-  
+
 
 
   return (

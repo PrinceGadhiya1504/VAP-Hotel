@@ -41,7 +41,7 @@ const RoomCategory = () => {
             <select name="" id="">
               <option value="">ID</option>
             </select> */}
-            <Link to="/addCategory"><button>Add Category</button></Link>
+            <Link to="/admin/addCategory"><button>Add Category</button></Link>
           </div>
 
           <div className="browse">

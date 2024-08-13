@@ -41,7 +41,7 @@ const Gallery = () => {
     <select name="" id="">
       <option value="">ID</option>
     </select> */}
-    <Link to="/addImage"><button>Add Image</button></Link>
+    <Link to="/admin/addImage"><button>Add Image</button></Link>
   </div>
 
   <div className="browse">
