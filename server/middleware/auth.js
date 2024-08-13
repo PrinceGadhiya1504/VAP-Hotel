@@ -1,3 +1,4 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken')
 
 const auth = (req, res, next) => {
@@ -12,7 +13,7 @@ const auth = (req, res, next) => {
     
     // decode that token and get id
     try {
-        const decode = jwt.verify(token, "vvaapp");
+        const decode = jwt.verify(token, process.env.JWT_SECRET);
         console.log(decode);
         req.user = decode
       } catch (error) {

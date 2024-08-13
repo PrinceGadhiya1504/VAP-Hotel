@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors');
@@ -6,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const auth = require('./middleware/auth');
 
-const stripe = require("stripe")("sk_test_51PkNRDP769pZvV3q1MoGHrVoCTHzDHPVFiECESByknun4qzUbP4nzrwnlOh50ZB5CAoc5Hw8HvfdjELCIswAoRXE00TBuam5dD")
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const multer = require('multer');
 const path = require('path');
@@ -29,8 +30,8 @@ app.use(express.json())
 app.use(cookieParser());
 app.use(cors(corsOptions))
 
-mongoose.connect("mongodb+srv://PrinceGadhiya:123@merndb.eyezfe8.mongodb.net/VAP-Hotel")
 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -81,7 +82,7 @@ app.post('/registration', upload.single('image'), async (req, res) => {
       image
     });
 
-    const token = jwt.sign({ id: user._id, email }, "vvaapp", { expiresIn: '2h' });
+    const token = jwt.sign({ id: user._id, email }, process.env.JWT_SECRET, { expiresIn: '2h' });
 
     user.token = token;
     user.password = undefined;
@@ -114,7 +115,7 @@ app.post('/login', async (req, res) => {
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign(
         { id: user._id },
-        "vvaapp", //process.env.jwtsecret
+        process.env.JWT_SECRET, //process.env.jwtsecret
         {
           expiresIn: "2h",
         }
@@ -516,7 +517,7 @@ app.post('/booking', async (req, res) => {
   if (!bookingData.userId || !bookingData.roomId || !bookingData.checkInDate || !bookingData.checkOutDate || !bookingData.totalPrice) {
     return res.status(400).send("Invalid booking details");
   }
- 
+
   try {
     const newBooking = new Booking({
       ...bookingData,

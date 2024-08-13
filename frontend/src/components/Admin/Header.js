@@ -5,7 +5,13 @@ import imgSrc from './assert/img/1.jpeg'; // Adjust the path based on your file 
 import { Link, Outlet } from 'react-router-dom';
 
 const Header = () => {
-
+  const logOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userRole');
+    window.location.href = '/login';
+    alert("Logout Successfully...")
+ }
   return (
     <div>
       {/* <input type="checkbox" id="menu-toggle" /> */}
@@ -97,7 +103,7 @@ const Header = () => {
                 <div className="bg-img" style={{ backgroundImage: `url(${imgSrc})` }}></div>
 
                 <span className="las la-power-off"></span>
-                <Link to="/login"><span>Logout</span></Link>
+                <Link to="/login" onClick={logOut}><span>Logout</span></Link>
               </div>
             </div>
           </div>
