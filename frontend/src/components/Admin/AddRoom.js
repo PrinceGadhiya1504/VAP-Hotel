@@ -12,7 +12,7 @@ const AddRoom = () => {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
-  // const navigate = useNa vigate();
+  // const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
   const handleChange = (e) => {

@@ -36,10 +36,6 @@ const Users = () => {
       <div className="records table-responsive">
         <div className="record-header">
           <div className="add">
-            {/* <span>Entries</span>
-            <select name="" id="">
-              <option value="">ID</option>
-            </select> */}
             <Link to="/register"><button>Add User</button></Link>
           </div>
 

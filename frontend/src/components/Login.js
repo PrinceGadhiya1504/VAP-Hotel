@@ -46,7 +46,7 @@ const Login = () => {
   };
 
   return (
-    <div style={containerStyle}>
+    <div    style={containerStyle}>
       <div className="card" style={cardStyle}>
         <h2 className="text-center mb-4">Login</h2>
         {error && <div className="alert alert-danger">{error}</div>}

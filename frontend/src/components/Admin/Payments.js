@@ -1,8 +1,92 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const Payments = () => {
+  const [payment, setPayment] = useState([])
+
+  useEffect(() => {
+    axios.get('http://localhost:3001/payment')
+      .then(response => {
+        setPayment(response.data)
+      })
+  }, [])
+ 
+  // const deletePayment = async (id) => {
+  //   const confirmed = window.confirm('Are you sure you want to delete this Payment?');
+  //   if (!confirmed) {
+  //     return;
+  //   }
+  //   try {
+  //     const response = await axios.delete(`http://localhost:3001/payment/${id}`);
+  //     if (response.status === 200) {
+  //       setPayment(payment.filter(payment => payment._id !== id));
+  //     } else {
+  //       console.error('Failed to delete the User');
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
   return (
-    <div>Payments</div>
+    <div>
+      <div className="records table-responsive">
+        <div className="record-header">
+          <div className="add">
+            {/* <Link to="/register"><button>Add Payment</button></Link> */}
+          </div>
+          <div className="browse">
+            <input type="search" placeholder="Search" className="record-search" />
+            <select name="" id="">
+              <option value="">Status</option>
+            </select>
+          </div>
+
+        </div>
+
+        <table width="100%">
+          <thead>
+            <tr>
+              <th style={{ width: '5%' }}>#</th>
+              <th style={{ width: '5%' }}>bookingId</th>
+              <th style={{ width: '5%' }}> userId </th>
+              <th style={{ width: '5%' }}> amount </th>
+              <th style={{ width: '5%' }}> bank </th>
+              <th style={{ width: '5%' }}> paymentMethod </th>
+              <th style={{ width: '5%' }}> paymentStatus </th>
+              <th style={{ width: '5%' }}> paymentDate </th>
+              <th style={{ width: '5%' }}> transactionId </th>
+              <th style={{ width: '5%' }}> currency </th>
+              <th style={{ width: '5%' }}> Action </th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              payment.map((pay, index) => (
+                <tr key={index}>
+                  <td style={{ width: '5%' }}>{index + 1}</td>
+                  <td style={{ width: '5%' }}>{pay.bookingId}</td>
+                  <td style={{ width: '5%' }}>{pay.userId}</td>
+                  <td style={{ width: '5%' }}>{pay.amount}</td>
+                  <td style={{ width: '5%' }}>{pay.bank}</td>
+                  <td style={{ width: '5%' }}>{pay.paymentMethod}</td>
+                  <td style={{ width: '5%' }}>{pay.paymentStatus}</td>
+                  <td style={{ width: '5%' }}>{pay.paymentDate}</td>
+                  <td style={{ width: '5%' }}>{pay.transactionId}</td>
+                  <td style={{ width: '5%' }}>{pay.currency}</td>
+                  {/* <td style={{ width: '5%' }}>
+                    <Link to={`/editPayment/${pay._id}`}><button className='editButton'>Edit</button></Link>
+                    <button onClick={() => deletePayment(pay._id)} className='deleteButton'>Delete</button>
+                  </td> */}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+
+      </div>
+    </div>
   )
 }
 

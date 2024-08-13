@@ -468,6 +468,46 @@ app.post('/availableRoom', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+ 
+// ReAvailableRoom Rooms 
+app.post('/reAvailableRoom', async (req, res) => {
+  const { checkInDate, checkOutDate, roomId } = req.body;
+console.log(roomId);
+
+  try {
+    // Convert dates to JavaScript Date objects
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+
+    // Check if the room is booked during the specified period
+    const booking = await Booking.findOne({
+      roomId,
+      $or: [
+        {
+          checkInDate: { $lt: checkOut },
+          checkOutDate: { $gt: checkIn }
+        }
+      ]
+    });
+
+    // If a booking exists, the room is not available
+    if (booking) {
+      return res.status(409).json({ message: 'Room is not available for the selected dates.' });
+    }
+
+    // If no booking exists, the room is available
+    const room = await Room.findById(roomId).populate('roomCategoryId', 'name price maxPerson facilities description');
+
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found.' });
+    }
+
+    res.status(200).json({ message: 'Room is available, wait for payment process', room });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 // Create a new booking
 app.post('/booking', async (req, res) => {
@@ -478,18 +518,30 @@ app.post('/booking', async (req, res) => {
   }
 
   try {
+    // const checkIn = new Date(bookingData.checkInDate);
+    // const checkOut = new Date(bookingData.checkOutDate);
+
+    // // Check for overlapping bookings for the selected room and dates
+    // const overlappingBookings = await Booking.find({
+    //   roomId: bookingData.roomId,
+    //   status: { $ne: 'pending' },
+    //   $or: [
+    //     { checkInDate: { $lt: checkOut }, checkOutDate: { $gt: checkIn } }
+    //   ]
+    // });
+
+    // // If there are overlapping bookings, return a conflict status
+    // if (overlappingBookings.length > 0) {
+    //   return res.status(409).json({ message: "Room is not available for the selected dates" });
+    // }
+
+    // Proceed with creating the new booking if the room is available
     const newBooking = new Booking({
-      userId: bookingData.userId,
-      roomId: bookingData.roomId,
-      checkInDate: bookingData.checkInDate,
-      checkOutDate: bookingData.checkOutDate,
-      totalPrice: bookingData.totalPrice,
-      specialRequests: bookingData.specialRequests,
-      status: 'pending', // Mark as pending until payment is confirmed
+      ...bookingData,
+      status: 'pending',
     });
 
     await newBooking.save();
-
     res.json({ bookingId: newBooking._id });
   } catch (error) {
     console.error("Error creating booking:", error);
@@ -497,6 +549,8 @@ app.post('/booking', async (req, res) => {
   }
 });
 
+
+// Get All Booking
 app.get('/bookings', async (req, res) => {
   try {
     const allbokings = await Booking.find().populate('userId').populate('roomId');
@@ -651,34 +705,48 @@ app.delete('/gallery/:id', async (req, res) => {
   }
 });
 
+// Get All Payment
+app.get('/payment', async (req, res) => {
+  try {
+    const allPayment = await Payment.find().populate('bookingId').populate('userId');
+    res.status(200).json(allPayment);
+  } catch (error) {
+    res.status(500).json(error.message)
+  }
+})
+
+
 // Create a checkout session
 app.post('/create-checkout-session', async (req, res) => {
-  const { booking } = req.body;
+  const { bookingId } = req.body;
 
   try {
-    // Create a Stripe session
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).send('Booking not found');
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'inr',
-            product_data: {
-              name: `Room Number: ${booking.roomId}`,
-              description: `Check-In Date: ${booking.checkInDate}\nCheck-Out Date: ${booking.checkOutDate}`,
-            },
-            unit_amount: booking.totalPrice * 100, // Convert to the smallest currency unit
+      line_items: [{
+        price_data: {
+          currency: 'inr',
+          product_data: {
+            name: `Room Number: ${booking.roomId}`,
+            description: `Check-In Date: ${booking.checkInDate.toDateString()}\nCheck-Out Date: ${booking.checkOutDate.toDateString()}`,
           },
-          quantity: 1,
+          unit_amount: booking.totalPrice * 100,
         },
-      ],
+        quantity: 1,
+      }],
       mode: 'payment',
       success_url: 'http://localhost:3000/payment-success',
       cancel_url: 'http://localhost:3000/payment-cancel',
-      client_reference_id: booking._id.toString(), // Attach booking ID for reference
+      client_reference_id: booking._id.toString(),
     });
 
-    res.json({ id: session.id });
+    res.json({ sessionId: session.id });
   } catch (error) {
     console.error('Error creating checkout session:', error);
     res.status(500).send('Internal Server Error');
@@ -689,46 +757,37 @@ app.post('/create-checkout-session', async (req, res) => {
 app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
-  
+
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, 'we_1PlrDTP769pZvV3qfZJyZRmn'); // Replace with your webhook secret key
-    console.log("Webhook received: ", event.type); // Check if this is logged
+    event = stripe.webhooks.constructEvent(req.body, sig, 'your-webhook-secret'); // Replace with your webhook secret key
   } catch (err) {
-    console.error(`⚠️  Webhook signature verification failed.`, err.message);
+    console.error('Webhook signature verification failed:', err.message);
     return res.sendStatus(400);
   }
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
 
-    console.log("Session object: ", session); // Check if session data is logged
-
     try {
-      // Retrieve the booking using client_reference_id (which is booking._id)
       const booking = await Booking.findById(session.client_reference_id);
 
       if (!booking) {
-        console.error('Booking not found');
-        return res.sendStatus(404); // Send 404 if booking not found
+        return res.sendStatus(404);
       }
 
-      // Update booking status to 'confirmed'
       booking.status = 'confirmed';
       booking.updatedAt = Date.now();
       await booking.save();
 
-      // Insert payment record
       await Payment.create({
         userId: booking.userId,
         bookingId: booking._id,
-        amount: session.amount_total / 100, // Convert from smallest unit
+        amount: session.amount_total / 100,
         paymentDate: new Date(),
         paymentMethod: 'card',
-        status: 'success',
       });
 
-      console.log("Booking and payment updated successfully");
-
+      console.log('Booking and payment updated successfully');
     } catch (err) {
       console.error('Error processing payment success:', err);
     }

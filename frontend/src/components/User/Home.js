@@ -8,9 +8,9 @@ const Home = () => {
    useEffect(() => {
       axios.get('http://localhost:3001/gallery')
          .then(response => {
-            const filteredGallery = response.data.filter(item => item.category === 'slider');
+            const filteredGallery = response.data.filter(item => item.category === 'gallery');
             setGallery(filteredGallery);
-            console.log(filteredGallery);
+            // console.log(filteredGallery);
          })
          .catch(error => {
             console.error("There was an error fetching the gallery images!", error);
@@ -41,7 +41,7 @@ const Home = () => {
                   <span className="carousel-control-next-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
                </a>
-            </div>
+            </div> edgtgwthg
          </section>
          <About/>
       </div>

@@ -1,20 +1,16 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AvailableRoom = () => {
   const [availableRooms, setAvailableRooms] = useState([]);
-  
-  const userId = localStorage.getItem('userId');
-  
   const [formData, setFormData] = useState({
     checkInDate: '',
     checkOutDate: ''
   });
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -35,15 +31,19 @@ const AvailableRoom = () => {
       });
   };
 
-  const loginRequire = () => {
-    if(!userId){
-      alert("Login Required")
-      window.location.href = '/login';
-    }
-  }
+  const handleBooking = (room) => {
+    navigate(`/booking/${room._id}`, {
+      state: {
+        roomNumber: room.roomNumber,
+        checkInDate: formData.checkInDate,
+        checkOutDate: formData.checkOutDate
+      }
+    });
+  };
 
   return (
     <div className="booking_ocline">
+      {/* Form Section */}
       <div className="container my-5">
         <div className="row">
           <div className="col-md-5 mx-auto">
@@ -81,6 +81,7 @@ const AvailableRoom = () => {
         </div>
       </div>
 
+      {/* Available Rooms Section */}
       <div className='m-4'>
         {availableRooms.length > 0 && (
           <div className="mt-5">
@@ -108,10 +109,12 @@ const AvailableRoom = () => {
                       <td>{room.roomCategoryId.description}</td>
                       <td>{room.roomCategoryId.facilities}</td>
                       <td className="text-center">
-                        <Link 
-                          to={`/booking/${room._id}?checkInDate=${formData.checkInDate}&checkOutDate=${formData.checkOutDate}`}>
-                          <button className='btn btn-primary' onClick={loginRequire}>Book Now</button>
-                        </Link>
+                        <button
+                          className='btn btn-primary'
+                          onClick={() => handleBooking(room)}
+                        >
+                          Book Now
+                        </button>
                       </td>
                     </tr>
                   ))}
