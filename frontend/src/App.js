@@ -56,11 +56,12 @@ function App() {
           <Route
             path="/admin"
             element={
-              // <PrivateRoute role="admin">
+              <PrivateRoute role="admin">
                 <AdminLayout />
-              // </PrivateRoute>
+              </PrivateRoute>
             }
           >
+            {/* Define additional admin routes as children */}
             <Route path="category" element={<RoomCategory />} />
             <Route path="addCategory" element={<AddCategory />} />
             <Route path="editcategory/:id" element={<UpdateRoomCategory />} />

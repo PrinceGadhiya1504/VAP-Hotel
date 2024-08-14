@@ -5,8 +5,16 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    const userRole = localStorage.getItem('userRole');
+
+    if (token && userId && userRole) {
+      return { _id: userId, role: userRole };
+    }
+    return null;
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,19 +22,10 @@ export const AuthProvider = ({ children }) => {
     const userId = localStorage.getItem('userId');
     const userRole = localStorage.getItem('userRole');
 
-    // Debugging logs
-    console.log('Token:', token);
-    console.log('User Id:', userId);
-    console.log('User Role:', userRole);
-
-    if (token && userId && userRole) {
+    if (!user && token && userId && userRole) {
       setUser({ _id: userId, role: userRole });
-    } else {
-      setUser(null);
     }
-
-    setLoading(false); // Set loading to false once data is retrieved
-  }, []);
+  }, [user]);
 
   const login = async (email, password) => {
     try {
@@ -58,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

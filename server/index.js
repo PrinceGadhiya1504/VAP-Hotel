@@ -753,7 +753,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
 
     try {
       const booking = await Booking.findById(session.client_reference_id);
-
+ 
       if (!booking) {
         return res.sendStatus(404);
       }

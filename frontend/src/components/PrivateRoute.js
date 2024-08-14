@@ -1,24 +1,22 @@
-import React, { useContext } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import AuthContext from '../context/AuthContext';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
-const PrivateRoute = ({ role }) => {
-  const { user, loading } = useContext(AuthContext);
+const PrivateRoute = ({ children, role }) => {
+  const userRole = localStorage.getItem('userRole');
+  const isLoggedIn = !!localStorage.getItem('token');
 
-  // Debugging logs
-  console.log('Current User:', user);
-  console.log('Required Role:', role);
-  console.log('Loading:', loading);
-
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading state while user data is being retrieved
-  }
-
-  if (!user || (role && user.role !== role)) {
+  if (!isLoggedIn) {
+    // If the user is not logged in, redirect to the login page
     return <Navigate to="/login" />;
   }
 
-  return <Outlet />;
+  if (role && userRole !== role) {
+    // If the user role doesn't match, redirect to a forbidden or home page
+    return <Navigate to="/" />;
+  }
+
+  // If everything is okay, render the children components (e.g., AdminLayout)
+  return children;
 };
 
 export default PrivateRoute;
