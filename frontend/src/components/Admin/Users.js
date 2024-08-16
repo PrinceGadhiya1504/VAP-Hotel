@@ -83,7 +83,7 @@ const Users = () => {
                   {/* <td style={{ width: '5%' }}>{user.password}</td> */}
                   <td style={{ width: '5%' }}>{user.role}</td>
                   <td style={{ width: '5%' }}>
-                    <Link to={`/edituser/${user._id}`}><button className='editButton'>Edit</button></Link>
+                    <Link to={`/admin/edituser/${user._id}`}><button className='editButton'>Edit</button></Link>
                     <button onClick={() => deleteUser(user._id)} className='deleteButton'>Delete</button>
                   </td>
                 </tr>

@@ -6,6 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
+    
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
     const userRole = localStorage.getItem('userRole');
@@ -15,6 +16,7 @@ export const AuthProvider = ({ children }) => {
     }
     return null;
   });
+  
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -79,7 +79,7 @@ const Rooms = () => {
                   <td style={{ width: '5%' }}>{room.roomCategoryId.facilities}</td>
                   <td style={{ width: '5%' }}>{room.roomCategoryId.description}</td> */}
                   <td style={{ width: '5%' }}>
-                    <Link to={`/editRoom/${room._id}`}><button className='editButton'>Edit</button></Link>
+                    <Link to={`/admin/editRoom/${room._id}`}><button className='editButton'>Edit</button></Link>
                     <button onClick={() => deleteRoom(room._id)} className='deleteButton'>Delete</button>
                   </td>
                 </tr>

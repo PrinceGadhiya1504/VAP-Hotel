@@ -18,6 +18,11 @@ import About from './components/User/About';
 import Gallery from './components/User/Gallery';
 import Blog from './components/User/Blog';
 import Contact from './components/User/Contact';
+import UserNavbar from './components/User/Profile/UserNavbar';
+import UserDetails from './components/User/Profile/UserDetails'
+import BookingDetails from './components/User/Profile/BookingDetails'
+import ResetPassword from './components/User/Profile/ResetPassword'
+
 
 // Admin Side Routes
 import RoomCategory from './components/Admin/RoomCategory';
@@ -50,6 +55,11 @@ function App() {
             <Route path="contact" element={<Contact />} />
             <Route path="availableRoom" element={<AvailableRoom />} />
             <Route path="booking/:id" element={<Booking />} />
+            <Route path="profile/*" element={<UserNavbar />}>
+              <Route index element={<UserDetails />} />
+              <Route path="booking" element={<BookingDetails />} />
+              <Route path="reset-password" element={<ResetPassword />} />
+            </Route>
           </Route>
 
           {/* Admin Side Routes */}

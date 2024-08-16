@@ -29,9 +29,10 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser());
 app.use(cors(corsOptions))
+ 
 
-
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_URI);
 
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -199,7 +200,39 @@ app.put('/user/:id', upload.single('image'), async (req, res) => {
     console.log(error);
     res.status(500).json({ msg: 'Server error' });
   }
+}); 
+
+// Password reset
+app.post('/reset-password', async (req, res) => {
+  const { userId, currentPassword, newPassword } = req.body;
+ 
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    // Compare the current password with the stored hashed password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).send('Current password is incorrect');
+    }
+
+    // Hash the new password and update the user record
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    user.password = hashedPassword;
+
+    await user.save();
+
+    res.status(200).send('Password reset successful');
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(500).send('Server error');
+  }
 });
+
 
 // Delete User
 app.delete('/user/:id', async (req, res) => {
@@ -473,7 +506,6 @@ app.post('/availableRoom', async (req, res) => {
 // ReAvailableRoom Rooms 
 app.post('/reAvailableRoom', async (req, res) => {
   const { checkInDate, checkOutDate, roomId } = req.body;
-  console.log(roomId);
 
   try {
     // Convert dates to JavaScript Date objects
@@ -536,12 +568,24 @@ app.post('/booking', async (req, res) => {
 // Get All Booking
 app.get('/bookings', async (req, res) => {
   try {
-    const allbokings = await Booking.find().populate('userId').populate('roomId');
-    res.status(200).json(allbokings);
+    const allBookings = await Booking.find()
+      .populate({
+        path: 'userId',
+        select: 'name email' // adjust fields as necessary
+      })
+      .populate({
+        path: 'roomId',
+        populate: {
+          path: 'roomCategoryId',
+          select: 'name description' // adjust fields as necessary
+        }
+      });
+    res.status(200).json(allBookings);
   } catch (error) {
-    res.status(500).json(error.message)
+    res.status(500).json({ message: error.message });
   }
-})
+});
+
 
 // Get Single Booking Room
 app.get('/booking/:id', async (req, res) => {
@@ -742,7 +786,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, 'your-webhook-secret'); // Replace with your webhook secret key
+    event = stripe.webhooks.constructEvent(req.body, sig, 'we_1PlrDTP769pZvV3qfZJyZRmn'); // Replace with your webhook secret key
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return res.sendStatus(400);
