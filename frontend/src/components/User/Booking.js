@@ -107,7 +107,7 @@ const Booking = () => {
         const bookingResponse = await axios.post("http://localhost:3001/booking", formData);
         const bookingId = bookingResponse.data.bookingId;
 
-        const stripe = await loadStripe("your-stripe-public-key");
+        const stripe = await loadStripe("pk_test_51PgAK9DH4jbVtjUHqHqX5IwUMzPZ3nAWoUKVNfMSNaMGvZsxDPTHMjfnMu5VgMKR7nhT94qJBgmJAnwn7ebkZpgY00ZkecQ6s6");
 
         const sessionResponse = await axios.post("http://localhost:3001/create-checkout-session", {
           bookingId: bookingId

@@ -786,19 +786,21 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, 'we_1PlrDTP769pZvV3qfZJyZRmn'); // Replace with your webhook secret key
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET); // Use environment variable for webhook secret
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return res.sendStatus(400);
   }
 
+  
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
 
     try {
       const booking = await Booking.findById(session.client_reference_id);
- 
+
       if (!booking) {
+        console.error('Booking not found:', session.client_reference_id);
         return res.sendStatus(404);
       }
 
@@ -806,17 +808,18 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
       booking.updatedAt = Date.now();
       await booking.save();
 
-      await Payment.create({
+      const payment = await Payment.create({
         userId: booking.userId,
         bookingId: booking._id,
-        amount: session.amount_total / 100,
+        amount: session.amount_total / 100, // Convert from cents to dollars
         paymentDate: new Date(),
         paymentMethod: 'card',
       });
 
-      console.log('Booking and payment updated successfully');
+      console.log('Booking and payment updated successfully:', payment);
     } catch (err) {
       console.error('Error processing payment success:', err);
+      return res.sendStatus(500); // Return an error status if processing fails
     }
   }
 
