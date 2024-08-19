@@ -9,6 +9,8 @@ const Payments = () => {
     axios.get('http://localhost:3001/payment')
       .then(response => {
         setPayment(response.data)
+        console.log(response.data);
+        
       })
   }, [])
  
@@ -66,8 +68,8 @@ const Payments = () => {
               payment.map((pay, index) => (
                 <tr key={index}>
                   <td style={{ width: '5%' }}>{index + 1}</td>
-                  <td style={{ width: '5%' }}>{pay.bookingId}</td>
-                  <td style={{ width: '5%' }}>{pay.userId}</td>
+                  <td style={{ width: '5%' }}>{pay.bookingId._id}</td>
+                  <td style={{ width: '5%' }}>{pay.userId.name}</td>
                   <td style={{ width: '5%' }}>{pay.amount}</td>
                   <td style={{ width: '5%' }}>{pay.bank}</td>
                   <td style={{ width: '5%' }}>{pay.paymentMethod}</td>

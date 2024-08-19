@@ -22,6 +22,8 @@ import UserNavbar from './components/User/Profile/UserNavbar';
 import UserDetails from './components/User/Profile/UserDetails'
 import BookingDetails from './components/User/Profile/BookingDetails'
 import ResetPassword from './components/User/Profile/ResetPassword'
+import PaymentSuccess from './components/User/PaymentSuccess'
+import PaymentCancel from './components/User/PaymentCancel'
 
 
 // Admin Side Routes
@@ -60,6 +62,8 @@ function App() {
               <Route path="booking" element={<BookingDetails />} />
               <Route path="reset-password" element={<ResetPassword />} />
             </Route>
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-cancel" element={<PaymentCancel />} />
           </Route>
 
           {/* Admin Side Routes */}

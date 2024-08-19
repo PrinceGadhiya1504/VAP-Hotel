@@ -26,6 +26,7 @@ const corsOptions = {
 };
 
 const app = express()
+
 app.use(express.json())
 app.use(cookieParser());
 app.use(cors(corsOptions))
@@ -233,7 +234,6 @@ app.post('/reset-password', async (req, res) => {
   }
 });
 
-
 // Delete User
 app.delete('/user/:id', async (req, res) => {
   const userId = req.params.id;
@@ -388,6 +388,7 @@ app.delete('/roomCategory/:id', async (req, res) => {
   }
 });
 
+// Add new Rooms
 app.post('/room', async (req, res) => {
   try {
     const { roomNumber, roomCategoryId, status } = req.body;
@@ -541,7 +542,6 @@ app.post('/reAvailableRoom', async (req, res) => {
   }
 });
 
-
 // Create a new booking
 app.post('/booking', async (req, res) => {
   const bookingData = req.body;
@@ -564,7 +564,6 @@ app.post('/booking', async (req, res) => {
   }
 });
 
-
 // Get All Booking
 app.get('/bookings', async (req, res) => {
   try {
@@ -585,7 +584,6 @@ app.get('/bookings', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 // Get Single Booking Room
 app.get('/booking/:id', async (req, res) => {
@@ -679,7 +677,6 @@ app.post('/gallery', upload.single('image'), async (req, res) => {
   }
 });
 
-
 // Update a gallery image
 app.put('/gallery/:id', upload.single('image'), async (req, res) => {
   try {
@@ -698,7 +695,6 @@ app.put('/gallery/:id', upload.single('image'), async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
-
 
 // Delete a gallery image
 app.delete('/gallery/:id', async (req, res) => {
@@ -742,7 +738,6 @@ app.get('/payment', async (req, res) => {
   }
 })
 
-
 // Create a checkout session
 app.post('/create-checkout-session', async (req, res) => {
   const { bookingId } = req.body;
@@ -768,62 +763,53 @@ app.post('/create-checkout-session', async (req, res) => {
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: 'http://localhost:3000/payment-success',
-      cancel_url: 'http://localhost:3000/payment-cancel',
-      client_reference_id: booking._id.toString(),
+      success_url: `http://localhost:3001/payment-success/${bookingId}`,
+      cancel_url: 'http://localhost:3001/payment-cancel',
+      client_reference_id: booking._id.toString(),      
     });
 
     res.json({ sessionId: session.id });
+
   } catch (error) {
     console.error('Error creating checkout session:', error);
     res.status(500).send('Internal Server Error');
   }
 });
 
-// Handle payment success webhook from Stripe
-app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  let event;
+// Handle successful payment
+app.get('/payment-success/:bookingId', async (req, res) => {
+  const { bookingId } = req.params;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET); // Use environment variable for webhook secret
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err.message);
-    return res.sendStatus(400);
-  }
+    const booking = await Booking.findById(bookingId);
 
-  
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-
-    try {
-      const booking = await Booking.findById(session.client_reference_id);
-
-      if (!booking) {
-        console.error('Booking not found:', session.client_reference_id);
-        return res.sendStatus(404);
-      }
-
-      booking.status = 'confirmed';
-      booking.updatedAt = Date.now();
-      await booking.save();
-
-      const payment = await Payment.create({
-        userId: booking.userId,
-        bookingId: booking._id,
-        amount: session.amount_total / 100, // Convert from cents to dollars
-        paymentDate: new Date(),
-        paymentMethod: 'card',
-      });
-
-      console.log('Booking and payment updated successfully:', payment);
-    } catch (err) {
-      console.error('Error processing payment success:', err);
-      return res.sendStatus(500); // Return an error status if processing fails
+    if (!booking) {
+      return res.status(404).send('Booking not found');
     }
-  }
 
-  res.json({ received: true });
+    // Create payment record
+    const payment = new Payment({
+      bookingId: booking._id,
+      userId: booking.userId,
+      amount: booking.totalPrice,
+      bank: 'Stripe',
+      paymentMethod: 'card',
+      paymentStatus: 'completed',
+      transactionId: `txn_${booking._id}`, // Generate a transaction ID
+    });
+
+    await payment.save();
+
+    // Update booking status
+    booking.status = 'confirmed';
+    await booking.save();
+
+    // Redirect to a success page
+    res.redirect('http://localhost:3000/payment-success');
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 app.listen(3001, () => {

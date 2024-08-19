@@ -84,11 +84,11 @@ const Booking = () => {
       navigate('/login');
       return;
     }
-
+  
     setLoading(true);
     setError("");
     setSuccess("");
-
+  
     try {
       // Check if the room is available
       const availabilityResponse = await axios.post("http://localhost:3001/reAvailableRoom", {
@@ -96,26 +96,23 @@ const Booking = () => {
         checkOutDate: formData.checkOutDate,
         roomId: formData.roomId,
       });
-
+  
       if (availabilityResponse.status === 200) {
-        // Room is available, proceed with booking
         setSuccess(availabilityResponse.data.message);
-
-        // Continue with the booking process
-        // Uncomment and implement the following lines according to your booking process
-
+  
+        // Create booking first
         const bookingResponse = await axios.post("http://localhost:3001/booking", formData);
         const bookingId = bookingResponse.data.bookingId;
-
-        const stripe = await loadStripe("pk_test_51PgAK9DH4jbVtjUHqHqX5IwUMzPZ3nAWoUKVNfMSNaMGvZsxDPTHMjfnMu5VgMKR7nhT94qJBgmJAnwn7ebkZpgY00ZkecQ6s6");
-
+  
+        const stripe = await loadStripe("pk_test_51PkNRDP769pZvV3qcj4JeG7ixz8pLDBwln4uYlPjcDrH0l1gpJhZYi0oAFyZQi32nrvfV4x9SEsELwAB36O7BzTp00Kp4LTRl1");
+  
         const sessionResponse = await axios.post("http://localhost:3001/create-checkout-session", {
           bookingId: bookingId
         });
-
+  
         const sessionId = sessionResponse.data.sessionId;
         const result = await stripe.redirectToCheckout({ sessionId });
-
+  
         if (result.error) {
           console.error(result.error.message);
           setError(result.error.message);
@@ -124,11 +121,9 @@ const Booking = () => {
         }
       }
     } catch (error) {
-      // Check if it's a handled server error (like 409)
       if (error.response && error.response.status === 409) {
         setError(error.response.data.message);
       } else {
-        // Handle any unexpected errors
         console.error("Error during payment:", error.response || error);
         setError("An error occurred. Please try again.");
       }
@@ -136,6 +131,7 @@ const Booking = () => {
       setLoading(false);
     }
   };
+  
 
 
 
