@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateBooking = () => {
   const [formData, setFormData] = useState({
@@ -15,8 +15,7 @@ const UpdateBooking = () => {
   });
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
-
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -53,10 +52,10 @@ const UpdateBooking = () => {
       const response = await axios.put(`http://localhost:3001/booking/${id}`, formData);
       if (response.status === 200) {
         // console.log(response.data);
-        // navigate('/admin/bookings');
         setSuccess("Booking Update Successfully")
         setTimeout(() => {
-          window.location.href = '/admin/bookings'
+          navigate('/admin/bookings');
+          // window.location.href = '/admin/bookings'
         }, 2000)
       } else {
         // console.log("error");

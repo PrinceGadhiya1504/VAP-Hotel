@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AddCategory = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const AddCategory = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -66,7 +68,8 @@ const AddCategory = () => {
       if (response.status === 201) {
         setSuccess("Category added successfully");
         setTimeout(() => {
-          window.location.href = '/admin/category';
+          navigate('/admin/category')
+          // window.location.href = '/admin/category';
         }, 500);
       } else {
         alert(response.statusText);

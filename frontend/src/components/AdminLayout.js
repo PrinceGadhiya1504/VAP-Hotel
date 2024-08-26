@@ -1,14 +1,18 @@
 import React from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import imgSrc from './Admin/assert/img/1.jpeg'; // Adjust the path based on your file structure
 
 const AdminLayout = () => {
+
+  const navigate = useNavigate();
+
 
   const logOut = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('userRole');
-    window.location.href = '/login';
+    // window.location.href = '/login';
+    navigate('/login')
     alert("Logout Successfully...")
   }
   return (

@@ -51,31 +51,7 @@ const RoomPage = () => {
             </div>
          </div>
       </div>
-        {/* <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Hotel Room Listings</h1>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {
-              availableRooms.length > 0 ?
-              (
-                availableRooms.map((room, index) => (
-                    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white" key={index}>
-                  <img className="w-full" src="https://via.placeholder.com/400" alt="Card Image" />
-                  <div className="px-6 py-4">
-                    <div className="font-bold  mb-2">Room Number : {room.roomNumber}</div>
-                    <div className="mb-2">Type : {room.roomCategoryId.name}</div>
-                    <div className="mb-2">Price : {room.roomCategoryId.price}</div>
-                    <div className="mb-2">Facility : {room.roomCategoryId.facilities}</div>
-                    <p className="text-gray-700 text-base">
-                      {room.roomCategoryId.description}
-                    </p>
-                  </div>
-                </div>
-                ))
-              ): (
-                <h2 className="text-3xl font-semibold text-gray-800 mb-8">No rooms available</h2>
-              )}
-          </div>
-        </div> */}
+       
     </div >    
   )
 }

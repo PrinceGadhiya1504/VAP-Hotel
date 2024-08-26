@@ -41,7 +41,7 @@ const Home = () => {
                   <span className="carousel-control-next-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
                </a>
-            </div> edgtgwthg
+            </div>
          </section>
          <About/>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateGalleryImage = () => {
   const { id } = useParams();
@@ -8,8 +8,8 @@ const UpdateGalleryImage = () => {
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
+  const navigate = useNavigate();
 
-  
   useEffect(() => {
     axios.get(`http://localhost:3001/gallery/${id}`)
       .then(response => {
@@ -47,7 +47,9 @@ const UpdateGalleryImage = () => {
     axios.put(`http://localhost:3001/gallery/${id}`, formData)
       .then(response => {
         alert('Image updated successfully');
-        window.location.href = '/admin/gallery';
+        // window.location.href = '/admin/gallery';
+        navigate('/admin/gallery')
+
       })
       .catch(error => {
         console.error('There was an error updating the image!', error);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 // import { useNavigate } from 'react-router-dom';
 
 const AddRoom = () => {
@@ -11,8 +12,7 @@ const AddRoom = () => {
 
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
-
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
   const handleChange = (e) => {
@@ -46,7 +46,8 @@ console.log(categories);
         // navigate('/admin/rooms');
         setSuccess("Room added Successfully")
         setTimeout(() => {
-          window.location.href = '/admin/rooms'
+          // window.location.href = '/admin/rooms'
+          navigate('/admin/rooms')
         }, 500)
       } else {
         alert(response.statusText);

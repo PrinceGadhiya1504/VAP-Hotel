@@ -1,15 +1,25 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
+   const [isAuthenticated, setIsAuthenticated] = useState(false);
+   const navigate = useNavigate();
+
+   useEffect(() => {
+      // Check if token exists in localStorage to set the authentication status
+      const token = localStorage.getItem('token');
+      setIsAuthenticated(!!token);
+   }, []);
 
    const logOut = () => {
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
       localStorage.removeItem('userRole');
-      window.location.href = '/';
-      alert("Logout Successfully...")
-   }
+      setIsAuthenticated(false); // Update the authentication status
+      navigate('/'); // Redirect to the home page
+      alert("Logout Successfully...");
+   };
+
    return (
       <div>
          <header>
@@ -20,13 +30,13 @@ const Header = () => {
                         <div className="full">
                            <div className="center-desk">
                               <div className="logo">
-                                 <Link to="/"><img src="images/vap_logo.png" alt="#" /></Link>
+                                 <Link to="/"><img src="images/vap_logo.png" alt="Logo" /></Link>
                               </div>
                            </div>
                         </div>
                      </div>
                      <div className="col-xl-9 col-lg-9 col-md-9 col-sm-9">
-                        <nav className="navigation navbar navbar-expand-md navbar-dark ">
+                        <nav className="navigation navbar navbar-expand-md navbar-dark">
                            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
                               <span className="navbar-toggler-icon"></span>
                            </button>
@@ -39,7 +49,7 @@ const Header = () => {
                                     <Link className="nav-link" to="/about">About</Link>
                                  </li>
                                  <li className="nav-item">
-                                    <Link className="nav-link" to="/rooms">Our room</Link>
+                                    <Link className="nav-link" to="/rooms">Room</Link>
                                  </li>
                                  <li className="nav-item">
                                     <Link className="nav-link" to="/availableRoom">Booking</Link>
@@ -53,15 +63,20 @@ const Header = () => {
                                  <li className="nav-item">
                                     <Link className="nav-link" to="/contact">Contact Us</Link>
                                  </li>
-                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/login">Login</Link>
-                                 </li>
-                                 <li>
-                                    <Link className="nav-link" onClick={logOut}>logout</Link>
-                                 </li>
-                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/profile">Profile</Link>
-                                 </li>
+                                 {!isAuthenticated ? (
+                                    <li className="nav-item">
+                                       <Link className="nav-link" to="/login">Login</Link>
+                                    </li>
+                                 ) : (
+                                    <>
+                                       <li className="nav-item">
+                                          <Link className="nav-link" to="/profile">Profile</Link>
+                                       </li>
+                                       <li className="nav-item">
+                                          <Link className="nav-link" onClick={logOut} style={{ cursor: 'pointer' }}>Logout</Link>
+                                       </li>
+                                    </>
+                                 )}
                               </ul>
                            </div>
                         </nav>
@@ -71,7 +86,7 @@ const Header = () => {
             </div>
          </header>
       </div>
-   )
-}
+   );
+};
 
-export default Header
+export default Header;

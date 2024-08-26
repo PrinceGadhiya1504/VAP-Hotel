@@ -305,20 +305,26 @@ button {
 
 /** banner section **/
 /* Home.css */
-
 .banner_main {
     position: relative;
     overflow: hidden;
+    padding: 0 150px; /* Space on left and right */
   }
   
-  .carousel-image {
-    height: 60vh; /* Adjust based on design */
-    object-fit: cover; /* Maintain aspect ratio and cover container */
-    width: 100%; /* Ensure image covers the container width */
+  .carousel-inner {
+    padding: 0; /* Ensure no extra padding inside the inner container */
   }
   
   .carousel-item {
     transition: opacity 0.5s ease-in-out; /* Smooth transition effect */
+  }
+  
+  .carousel-image {
+    height: 80vh; 
+    object-fit: cover;
+    /* width: calc(100% + 40px);
+    margin-left: -20px; 
+    margin-right: -20px; */
   }
   
   .carousel-control-prev-icon,
@@ -331,7 +337,6 @@ button {
     background-color: #fff; /* Indicator color */
   }
   
-
 .booking_ocline {
     position: fix;
     width: 100%;

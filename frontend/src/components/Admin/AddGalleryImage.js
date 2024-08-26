@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AddGalleryImage = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,8 @@ const AddGalleryImage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const navigate = useNavigate();
+
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -49,7 +52,8 @@ const AddGalleryImage = () => {
       if (response.status === 201) {
         setSuccess("Image added successfully");
         setTimeout(() => {
-          window.location.href = '/admin/gallery';
+          // window.location.href = '/admin/gallery';
+          navigate('/admin/gallery')
         }, 500);
       } else {
         alert(response.statusText);

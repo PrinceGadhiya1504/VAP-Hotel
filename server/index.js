@@ -25,13 +25,12 @@ const corsOptions = {
   credentials: true, // Allow cookies to be sent
 };
 
-const app = express()
+const app = express() 
 
 app.use(express.json())
 app.use(cookieParser());
 app.use(cors(corsOptions))
  
-
 // mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connect(process.env.MONGO_URI);
 
@@ -305,7 +304,7 @@ app.get('/roomCategory', async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal Server Error");
-  }
+  } 
 })
 
 // Get Single Category By Id

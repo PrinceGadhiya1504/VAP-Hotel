@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateRoomCategory = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ const UpdateRoomCategory = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -70,7 +71,8 @@ const UpdateRoomCategory = () => {
       if (response.status === 200) {
         setSuccess("Category updated successfully");
         setTimeout(() => {
-          window.location.href = '/admin/category';
+          // window.location.href = '/admin/category';
+          navigate('/admin/category')
         }, 2000);
       } else {
         alert(response.statusText);

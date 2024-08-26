@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +19,8 @@ const Register = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const navigate = useNavigate();
+
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -59,7 +61,8 @@ const Register = () => {
       if (response.status === 201) {
         setSuccess("Registration Successful");
         setTimeout(() => {
-          window.location.href = '/login';
+          // window.location.href = '/login';
+          navigate('/login')
         }, 500);
       } else {
         alert(response.statusText);
