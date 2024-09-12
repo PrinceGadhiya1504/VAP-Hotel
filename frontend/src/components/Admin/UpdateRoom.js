@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateRoom = () => {
   const [formData, setFormData] = useState({
@@ -14,9 +14,10 @@ const UpdateRoom = () => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/room/${id}`)
+    axios.get(`${URL}room/${id}`)
       .then((res) => {
         setFormData(res.data);
       })
@@ -29,7 +30,7 @@ const UpdateRoom = () => {
     // Fetch categories from the backend
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/roomCategory');
+        const response = await axios.get(`${URL}roomCategory`);
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -50,7 +51,7 @@ const UpdateRoom = () => {
     e.preventDefault();
     setError("")
     try {
-      const response = await axios.put(`http://localhost:3001/room/${id}`, formData);
+      const response = await axios.put(`${URL}room/${id}`, formData);
       if (response.status === 200) {
         // console.log(response.data);
         setSuccess("Room Update Successfully")

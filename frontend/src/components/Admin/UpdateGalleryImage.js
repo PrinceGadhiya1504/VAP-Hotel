@@ -9,15 +9,16 @@ const UpdateGalleryImage = () => {
   const [description, setDescription] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/gallery/${id}`)
+    axios.get(`${URL}gallery/${id}`)
       .then(response => {
         console.log(response.data);
         
         setCategory(response.data.category);
         setDescription(response.data.description);
-        setImagePreview(`http://localhost:3001/uploads/${response.data.imageName}`);
+        setImagePreview(`${URL}uploads/${response.data.imageName}`);
       })
       .catch(error => {
         console.error('There was an error fetching the image details!', error);
@@ -44,7 +45,7 @@ const UpdateGalleryImage = () => {
     formData.append('category', category);
     formData.append('description', description);
 
-    axios.put(`http://localhost:3001/gallery/${id}`, formData)
+    axios.put(`${URL}gallery/${id}`, formData)
       .then(response => {
         alert('Image updated successfully');
         // window.location.href = '/admin/gallery';

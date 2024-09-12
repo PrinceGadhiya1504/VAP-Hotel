@@ -4,11 +4,12 @@ import axios from 'axios';
 
 const Home = () => {
    const [gallery, setGallery] = useState([]);
+   const URL = process.env.REACT_APP_URL
 
    useEffect(() => {
-      axios.get('http://localhost:3001/gallery')
+      axios.get(`${URL}gallery`)
          .then(response => {
-            const filteredGallery = response.data.filter(item => item.category === 'gallery');
+            const filteredGallery = response.data.filter(item => item.category === 'slider');
             setGallery(filteredGallery);
             // console.log(filteredGallery);
          })
@@ -29,7 +30,7 @@ const Home = () => {
                <div className="carousel-inner">
                   {gallery.map((item, index) => (
                      <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                        <img className="d-block w-100 carousel-image" src={`http://localhost:3001/uploads/${item.imageName}`} alt={`Slide ${index + 1}`} />
+                        <img className="d-block w-100 carousel-image" src={`${URL}uploads/${item.imageName}`} alt={`Slide ${index + 1}`} />
                      </div>
                   ))}
                </div>
@@ -43,7 +44,7 @@ const Home = () => {
                </a>
             </div>
          </section>
-         <About/>
+         <About />
       </div>
    );
 }

@@ -5,9 +5,11 @@ import { Link } from 'react-router-dom'
 const Gallery = () => {
 
   const [image, setImage] = useState([])
+  const URL = process.env.REACT_APP_URL
+
 
   useEffect(() => {
-    axios.get('http://localhost:3001/gallery')
+    axios.get(`${URL}gallery`)
       .then(response => {
         console.log(response.data);
         setImage(response.data)
@@ -21,7 +23,7 @@ const Gallery = () => {
       return;
     }
     try {
-      const response = await axios.delete(`http://localhost:3001/gallery/${id}`);
+      const response = await axios.delete(`${URL}gallery/${id}`);
       if (response.status === 200) {
         setImage(image.filter(img => img._id !== id));
       } else {
@@ -44,12 +46,12 @@ const Gallery = () => {
     <Link to="/admin/addImage"><button>Add Image</button></Link>
   </div>
 
-  <div className="browse">
+  {/* <div className="browse">
     <input type="search" placeholder="Search" className="record-search" />
     <select name="" id="">
       <option value="">Status</option>
     </select>
-  </div>
+  </div> */}
 
 </div>
 
@@ -67,7 +69,7 @@ const Gallery = () => {
       image.map((img, index) => (
         <tr key={index}>
           <td style={{ width: '5%' }}>{index + 1}</td>
-          <td style={{ width: '10%' }}> <img src={`http://localhost:3001/uploads/${img.imageName}`} alt={img.name} style={{ width: '100px', height: '100px' }} /></td>
+          <td style={{ width: '10%' }}> <img src={`${URL}uploads/${img.imageName}`} alt={img.name} style={{ width: '100px', height: '100px' }} /></td>
           <td style={{ width: '5%' }}>{img.category}</td>
           <td style={{ width: '5%' }}>
             <Link to={`/editGallery/${img._id}`}><button className='editButton'>Edit</button></Link>

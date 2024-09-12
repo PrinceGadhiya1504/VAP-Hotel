@@ -11,14 +11,14 @@ const formatDate = (dateString) => {
 const BookingDetails = () => {
   // const { user } = useContext(AuthContext);
   const userId = localStorage.getItem('userId');
-
   const [bookings, setBookings] = useState([]);
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
     const fetchBookings = async () => {
       if (userId) {
         try {
-          const response = await axios.get(`http://localhost:3001/bookings`);
+          const response = await axios.get(`${URL}bookings`);
           // Filter bookings by user ID
           const userBookings = response.data.filter(booking => booking.userId._id === userId);
           setBookings(userBookings);

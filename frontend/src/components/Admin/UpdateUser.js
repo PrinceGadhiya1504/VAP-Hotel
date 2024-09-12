@@ -21,9 +21,10 @@ const UpdateUser = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/user/${id}`)
+    axios.get(`${URL}user/${id}`)
       .then((res) => {
         const data = res.data;
         setFormData({
@@ -39,7 +40,7 @@ const UpdateUser = () => {
           role: data.role,
           image: null
         });
-        setImagePreview(`http://localhost:3001/uploads/${data.image}`); // Assuming the backend provides the image URL relative to the server
+        setImagePreview(`${URL}uploads/${data.image}`); // Assuming the backend provides the image URL relative to the server
       })
       .catch((err) => {
         console.log(err);
@@ -77,7 +78,7 @@ const UpdateUser = () => {
     }
 
     try {
-      const response = await axios.put(`http://localhost:3001/user/${id}`, formDataToSend, {
+      const response = await axios.put(`${URL}user/${id}`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

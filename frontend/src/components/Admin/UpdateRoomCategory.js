@@ -16,15 +16,16 @@ const UpdateRoomCategory = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/roomCategory/${id}`)
+    axios.get(`${URL}roomCategory/${id}`)
       .then((res) => {
         setFormData({
           ...res.data,
           image: null
         });
-        setImagePreview(`http://localhost:3001/uploads/${res.data.image}`); // Assuming the backend provides the image URL relative to the server
+        setImagePreview(`${URL}uploads/${res.data.image}`); // Assuming the backend provides the image URL relative to the server
         console.log(res.data);
       })
       .catch((err) => {
@@ -63,7 +64,7 @@ const UpdateRoomCategory = () => {
     }
 
     try {
-      const response = await axios.put(`http://localhost:3001/roomCategory/${id}`, formDataToSend, {
+      const response = await axios.put(`${URL}roomCategory/${id}`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

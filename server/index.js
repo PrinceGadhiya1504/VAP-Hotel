@@ -20,16 +20,16 @@ const Booking = require('./model/Booking')
 const Gallery = require('./model/Gallery');
 const Payment = require('./model/Payment');
 
-const corsOptions = {
-  origin: 'http://localhost:3000', // Allow only this origin
-  credentials: true, // Allow cookies to be sent
-};
-
-const app = express() 
-
+const app = express();
+app.use(
+  cors({
+    origin: "*",
+    credentials: false,
+  })
+);
+app.use(express.json());
 app.use(express.json())
 app.use(cookieParser());
-app.use(cors(corsOptions))
  
 // mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connect(process.env.MONGO_URI);
@@ -171,7 +171,7 @@ app.get('/user/:id', async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 })
-
+ 
 // Update User
 app.put('/user/:id', upload.single('image'), async (req, res) => {
   const userId = req.params.id;
@@ -305,9 +305,9 @@ app.get('/roomCategory', async (req, res) => {
     console.log(error);
     return res.status(500).send("Internal Server Error");
   } 
-})
+}) 
 
-// Get Single Category By Id
+// Get Single Category By Id 
 app.get('/roomCategory/:id', async (req, res) => {
   const categoryId = req.params.id
   try {
@@ -322,7 +322,7 @@ app.get('/roomCategory/:id', async (req, res) => {
     console.log(error);
     return res.status(500).send("Internal Server Error");
   }
-})
+}) 
 
 // Update Category Route
 app.put('/roomCategory/:id', upload.single('image'), async (req, res) => {

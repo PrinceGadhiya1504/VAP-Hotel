@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom';
 const Users = () => {
 
   const [user, setUser] = useState([])
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
-    axios.get('http://localhost:3001/users')
+    axios.get(`${URL}users`)
       .then(response => {
         console.log(response.data);
         setUser(response.data)
@@ -20,7 +21,7 @@ const Users = () => {
       return;
     }
     try {
-      const response = await axios.delete(`http://localhost:3001/user/${id}`);
+      const response = await axios.delete(`${URL}user/${id}`);
       if (response.status === 200) {
         setUser(user.filter(user => user._id !== id));
       } else {
@@ -39,12 +40,12 @@ const Users = () => {
             <Link to="/register"><button>Add User</button></Link>
           </div>
 
-          <div className="browse">
+          {/* <div className="browse">
             <input type="search" placeholder="Search" className="record-search" />
             <select name="" id="">
               <option value="">Status</option>
             </select>
-          </div>
+          </div> */}
 
         </div>
 
@@ -71,7 +72,7 @@ const Users = () => {
               user.map((user, index) => (
                 <tr key={index}>
                   <td style={{ width: '5%' }}>{index + 1}</td>
-                  <td style={{ width: '5%' }}> <img src={`http://localhost:3001/uploads/${user.image}`} alt={user.image} style={{ width: '100px', height: '100px' }} /></td>
+                  <td style={{ width: '5%' }}> <img src={`${URL}uploads/${user.image}`} alt={user.image} style={{ width: '100px', height: '100px' }} /></td>
                   <td style={{ width: '5%' }}>{user.name}</td>
                   <td style={{ width: '5%' }}>{user.phone}</td>
                   <td style={{ width: '5%' }}>{user.address}</td>

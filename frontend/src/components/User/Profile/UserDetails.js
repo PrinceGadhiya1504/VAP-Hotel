@@ -5,14 +5,14 @@ import axios from 'axios';
 const UserDetails = () => {
   // const { user } = useContext(AuthContext);
   const userId = localStorage.getItem('userId');
-
   const [userData, setUserData] = useState(null);
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (userId) {
         try {
-          const response = await axios.get(`http://localhost:3001/user/${userId}`);
+          const response = await axios.get(`${URL}user/${userId}`);
           setUserData(response.data);
         } catch (error) {
           console.error('Failed to fetch user details', error);
@@ -30,7 +30,7 @@ const UserDetails = () => {
       <div className="card" style={{ maxWidth: '500px' }}>
         <div className="card-body text-center">
           <img
-            src={`http://localhost:3001/uploads/${userData.image}`}
+            src={`${URL}uploads/${userData.image}`}
             alt={userData.image}
             className="rounded-circle img-fluid mb-3"
             style={{ width: '150px', height: '150px', objectFit: 'cover' }}

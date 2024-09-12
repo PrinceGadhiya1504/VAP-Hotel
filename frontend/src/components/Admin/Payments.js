@@ -1,12 +1,14 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 
 const Payments = () => {
   const [payment, setPayment] = useState([])
+  const URL = process.env.REACT_APP_URL
+
 
   useEffect(() => {
-    axios.get('http://localhost:3001/payment')
+    axios.get(`${URL}payment`)
       .then(response => {
         setPayment(response.data)
         console.log(response.data);
@@ -38,12 +40,12 @@ const Payments = () => {
           <div className="add">
             {/* <Link to="/register"><button>Add Payment</button></Link> */}
           </div>
-          <div className="browse">
+          {/* <div className="browse">
             <input type="search" placeholder="Search" className="record-search" />
             <select name="" id="">
               <option value="">Status</option>
             </select>
-          </div>
+          </div> */}
 
         </div>
 
@@ -51,16 +53,16 @@ const Payments = () => {
           <thead>
             <tr>
               <th style={{ width: '5%' }}>#</th>
-              <th style={{ width: '5%' }}>bookingId</th>
-              <th style={{ width: '5%' }}> userId </th>
-              <th style={{ width: '5%' }}> amount </th>
-              <th style={{ width: '5%' }}> bank </th>
-              <th style={{ width: '5%' }}> paymentMethod </th>
-              <th style={{ width: '5%' }}> paymentStatus </th>
-              <th style={{ width: '5%' }}> paymentDate </th>
-              <th style={{ width: '5%' }}> transactionId </th>
-              <th style={{ width: '5%' }}> currency </th>
-              <th style={{ width: '5%' }}> Action </th>
+              {/* <th style={{ width: '5%' }}>bookingId</th> */}
+              <th style={{ width: '5%' }}> User Name </th>
+              <th style={{ width: '5%' }}> Amount </th>
+              <th style={{ width: '5%' }}> Bank </th>
+              <th style={{ width: '5%' }}> Payment Method </th>
+              <th style={{ width: '5%' }}> Payment Status </th>
+              <th style={{ width: '5%' }}> Date </th>
+              <th style={{ width: '5%' }}> Transaction Id </th>
+              <th style={{ width: '5%' }}> Currency </th>
+              {/* <th style={{ width: '5%' }}> Action </th> */}
             </tr>
           </thead>
           <tbody>
@@ -68,7 +70,7 @@ const Payments = () => {
               payment.map((pay, index) => (
                 <tr key={index}>
                   <td style={{ width: '5%' }}>{index + 1}</td>
-                  <td style={{ width: '5%' }}>{pay.bookingId._id}</td>
+                  {/* <td style={{ width: '5%' }}>{pay.bookingId._id}</td> */}
                   <td style={{ width: '5%' }}>{pay.userId.name}</td>
                   <td style={{ width: '5%' }}>{pay.amount}</td>
                   <td style={{ width: '5%' }}>{pay.bank}</td>

@@ -250,65 +250,89 @@ button {
 .loader img {
     width: 280px;
 }
-
-
-/*-- header area --*/
-
-
-/*--------------------------------------------------------------------- top banner area ---------------------------------------------------------------------*/
-
-
-/*-- navigation--*/
-
-.navigation.navbar {
-    float: right;
-    padding-top: 14px !important;
-    padding: 0;
-}
-
-.navigation.navbar-dark .navbar-nav .nav-link {
-    padding: 7px 0px 27px 0px;
-    margin: 0 22px;
-    color: #010101;
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: 500;
-    text-transform: uppercase;
-    border-bottom: #fff solid 3px;
-}
-
-.navigation.navbar-dark .navbar-nav .nav-link:focus,
-.navigation.navbar-dark .navbar-nav .nav-link:hover {
-    color: #fe0000;
-    border-bottom: #fe0000 solid 3px;
-}
-
-.navigation.navbar-dark .navbar-nav .active>.nav-link,
-.navigation.navbar-dark .navbar-nav .nav-link.active,
-.navigation.navbar-dark .navbar-nav .nav-link.show,
-.navigation.navbar-dark .navbar-nav .show>.nav-link {
-    color: #fe0000;
-    border-bottom: #fe0000 solid 3px;
-}
-
-.navbar-expand-md .navbar-nav {
-    padding-right: 10px;
-}
-
+/* Header Styles */
 .header {
     width: 100%;
-    height: 86px;
-    padding: 15px 0px 15px 0px;
-    background: #fff;
+    padding: 10px 0; /* Adjust padding for better fit */
+    background: #ffffff; /* Set background to white */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for visual separation */
+    display: flex;
+    align-items: center;
+}
+
+.logo_section {
+    flex: 0 0 auto; /* Prevent the logo section from growing */
+    text-align: center; /* Center logo in its section */
+}
+
+.logo-img {
+    max-width: 100%;
+    height: auto; /* Ensure the logo scales properly */
+    max-height: 60px; /* Restrict maximum height to maintain proportion */
+}
+
+.navbar {
+    padding: 0; /* Remove default padding */
+    flex: 1; /* Allow the navbar to take up the remaining space */
+}
+
+.navbar-nav {
+    display: flex;
+    justify-content: center; /* Center items horizontally */
+    width: 100%;
+    margin: 0; /* Remove margin to ensure proper centering */
+}
+
+.nav-link {
+    padding: 10px 20px; /* Adjust padding for better spacing */
+    color: #000000; /* Set text color to black */
+    font-size: 16px; /* Set font size */
+    font-weight: 700; /* Make font bold */
+    text-transform: uppercase;
+    border-bottom: solid 3px transparent; /* Default border for active link */
+    transition: color 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    color: #fe0000; /* Set hover and focus color */
+    border-bottom: solid 3px #fe0000; /* Set active link border color */
+}
+
+.navbar-toggler {
+    border: none; /* Remove border from toggler button */
+    background-color: #fe0000; /* Background color for toggler button */
+}
+
+.navbar-toggler-icon {
+    background-image: url('data:image/svg+xml,...'); /* Use default Bootstrap icon */
+    background-color: #fff; /* White background color for toggler icon */
+}
+
+/* Responsive Styles */
+@media (max-width: 767px) {
+    .header {
+        padding: 5px 0; /* Reduce padding on mobile */
+        flex-direction: column; /* Stack items vertically on small screens */
+    }
+
+    .nav-link {
+        padding: 8px 10px; /* Adjust padding for mobile view */
+    }
+}
+
+@media (min-width: 768px) {
+    .navbar-nav {
+        flex-direction: row; /* Horizontal layout for large screens */
+    }
 }
 
 
-/** banner section **/
-/* Home.css */
+/** Banner Section **/
 .banner_main {
     position: relative;
     overflow: hidden;
-    padding: 0 150px; /* Space on left and right */
+    padding: 0 15px; /* Reduced padding for better mobile view */
   }
   
   .carousel-inner {
@@ -320,11 +344,8 @@ button {
   }
   
   .carousel-image {
-    height: 80vh; 
+    height: 60vh; /* Adjusted height for better mobile view */
     object-fit: cover;
-    /* width: calc(100% + 40px);
-    margin-left: -20px; 
-    margin-right: -20px; */
   }
   
   .carousel-control-prev-icon,
@@ -336,6 +357,30 @@ button {
   .carousel-indicators li {
     background-color: #fff; /* Indicator color */
   }
+  
+  /* Responsive Styles */
+  @media (max-width: 767px) {
+    .carousel-image {
+      height: 40vh; /* Reduced height for smaller screens */
+    }
+  
+    .banner_main {
+      padding: 0; /* Remove padding for small screens */
+    }
+  }
+  
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .carousel-image {
+      height: 50vh; /* Adjust height for medium-sized screens */
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .carousel-image {
+      height: 80vh; /* Default height for larger screens */
+    }
+  }
+  
   
 .booking_ocline {
     position: fix;

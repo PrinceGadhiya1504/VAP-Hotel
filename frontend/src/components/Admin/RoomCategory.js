@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom';
 const RoomCategory = () => {
 
   const [category, setCategory] = useState([])
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
-    axios.get('http://localhost:3001/roomCategory')
+    axios.get(`${URL}roomCategory`)
       .then(response => {
         console.log(response.data);
         setCategory(response.data)
@@ -20,7 +21,7 @@ const RoomCategory = () => {
       return;
     }
     try {
-      const response = await axios.delete(`http://localhost:3001/roomCategory/${id}`);
+      const response = await axios.delete(`${URL}roomCategory/${id}`);
       if (response.status === 200) {
         setCategory(category.filter(cat => cat._id !== id));
       } else {
@@ -44,12 +45,12 @@ const RoomCategory = () => {
             <Link to="/admin/addCategory"><button>Add Category</button></Link>
           </div>
 
-          <div className="browse">
+          {/* <div className="browse">
             <input type="search" placeholder="Search" className="record-search" />
             <select name="" id="">
               <option value="">Status</option>
             </select>
-          </div>
+          </div> */}
 
         </div>
 
@@ -71,7 +72,7 @@ const RoomCategory = () => {
               category.map((cat, index) => (
                 <tr key={index}>
                   <td style={{ width: '5%' }}>{index + 1}</td>
-                  <td style={{ width: '5%' }}> <img src={`http://localhost:3001/uploads/${cat.image}`} alt={cat.image} style={{ width: '100px', height: '100px' }} /></td>
+                  <td style={{ width: '5%' }}> <img src={`${URL}uploads/${cat.image}`} alt={cat.image} style={{ width: '100px', height: '100px' }} /></td>
                   <td style={{ width: '5%' }}>{cat.name}</td>
                   <td style={{ width: '5%' }}>{cat.price}</td>
                   <td style={{ width: '5%' }}>{cat.maxPerson}</td>

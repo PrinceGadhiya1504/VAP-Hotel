@@ -12,6 +12,8 @@ const AddGalleryImage = () => {
   const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
+  const URL = process.env.REACT_APP_URL
+
 
 
   const handleChange = (e) => {
@@ -44,7 +46,7 @@ const AddGalleryImage = () => {
     formDataToSend.append('image', formData.image);
 
     try {
-      const response = await axios.post('http://localhost:3001/gallery', formDataToSend, {
+      const response = await axios.post(`${URL}gallery`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -20,7 +20,7 @@ const Register = () => {
   const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
-
+  const URL = process.env.REACT_APP_URL
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -53,7 +53,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3001/registration', formDataToSend, {
+      const response = await axios.post(`${URL}registration`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

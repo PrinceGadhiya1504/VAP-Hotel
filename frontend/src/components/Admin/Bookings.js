@@ -5,9 +5,11 @@ import { Link } from 'react-router-dom'
 const Bookings = () => {
 
   const [bookings, setBookings] = useState([])
+  const URL = process.env.REACT_APP_URL
+
 
   useEffect(() => {
-    axios.get('http://localhost:3001/bookings')
+    axios.get(`${URL}bookings`)
       .then(response => {
         // console.log(response.data);
         setBookings(response.data)
@@ -22,7 +24,7 @@ const Bookings = () => {
       return;
     }
     try {
-      const response = await axios.delete(`http://localhost:3001/booking/${id}`);
+      const response = await axios.delete(`${URL}booking/${id}`);
       if (response.status === 200) {
         setBookings(bookings.filter(booking => booking._id !== id));
       } else {
@@ -46,12 +48,12 @@ const Bookings = () => {
             <Link to="/availableRoom  "><button>Add record</button></Link>
           </div>
 
-          <div className="browse">
+          {/* <div className="browse">
             <input type="search" placeholder="Search" className="record-search" />
             <select name="" id="">
               <option value="">Status</option>
             </select>
-          </div>
+          </div> */}
 
         </div>
 

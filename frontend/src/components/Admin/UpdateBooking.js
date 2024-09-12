@@ -17,9 +17,10 @@ const UpdateBooking = () => {
   const [success, setSuccess] = useState("")
   const navigate = useNavigate();
   const { id } = useParams();
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/booking/${id}`)
+    axios.get(`${URL}booking/${id}`)
       .then((res) => {
         const data = res.data;
         setFormData({
@@ -49,7 +50,7 @@ const UpdateBooking = () => {
     e.preventDefault();
     setError("")  
     try {
-      const response = await axios.put(`http://localhost:3001/booking/${id}`, formData);
+      const response = await axios.put(`${URL}booking/${id}`, formData);
       if (response.status === 200) {
         // console.log(response.data);
         setSuccess("Booking Update Successfully")

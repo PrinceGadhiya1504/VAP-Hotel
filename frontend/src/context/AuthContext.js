@@ -6,7 +6,6 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
     const userRole = localStorage.getItem('userRole');
@@ -15,9 +14,10 @@ export const AuthProvider = ({ children }) => {
       return { _id: userId, role: userRole };
     }
     return null;
-  });
+  });  
   
   const navigate = useNavigate();
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -28,10 +28,10 @@ export const AuthProvider = ({ children }) => {
       setUser({ _id: userId, role: userRole });
     }
   }, [user]);
-
+  
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:3001/login', { email, password }, { withCredentials: true });
+      const response = await axios.post(`${URL}login`, { email, password }, { withCredentials: false });
       if (response.status === 200) {
         const { token, user } = response.data;
         localStorage.setItem('token', token);

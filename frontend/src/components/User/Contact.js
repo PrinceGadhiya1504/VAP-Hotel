@@ -9,6 +9,7 @@ const Contact = () => {
                <div className="col-md-12">
                   <div className="titlepage">
                      <h2>Contact Us</h2>
+                     <p>Get in Touch with VAP Hotel</p>
                   </div>
                </div>
             </div>

@@ -14,6 +14,8 @@ const AddRoom = () => {
   const [success, setSuccess] = useState("")
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const URL = process.env.REACT_APP_URL
+
 
   const handleChange = (e) => {
     setFormData({
@@ -25,7 +27,7 @@ const AddRoom = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/roomCategory');
+        const response = await axios.get(`${URL}roomCategory`);
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -41,7 +43,7 @@ console.log(categories);
     setError("")
 
     try {
-      const response = await axios.post('http://localhost:3001/room', formData);
+      const response = await axios.post(`${URL}room`, formData);
       if (response.status === 201) {
         // navigate('/admin/rooms');
         setSuccess("Room added Successfully")

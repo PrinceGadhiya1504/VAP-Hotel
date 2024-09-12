@@ -8,8 +8,8 @@ const AvailableRoom = () => {
     checkInDate: '',
     checkOutDate: ''
   });
-
   const navigate = useNavigate();
+  const URL = process.env.REACT_APP_URL
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,7 +21,7 @@ const AvailableRoom = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:3001/availableRoom', { formData })
+    axios.post(`${URL}availableRoom`, { formData })
       .then(response => {
         setAvailableRooms(response.data);
         console.log('Response:', response.data);

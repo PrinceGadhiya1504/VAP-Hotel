@@ -7,14 +7,11 @@ const Booking = () => {
   const { id } = useParams(); // Room ID
   const location = useLocation(); // Location to get passed state
   const navigate = useNavigate();
-
   const userId = localStorage.getItem('userId'); // Get user ID from local storage
-
   const [room, setRoom] = useState({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-
   const [formData, setFormData] = useState({
     userId: userId,
     roomId: id,
@@ -24,11 +21,12 @@ const Booking = () => {
     totalPrice: 0,
     specialRequests: '',
   });
+  const URL = process.env.REACT_APP_URL
 
   useEffect(() => {
     const fetchRoom = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/room/${id}`);
+        const response = await axios.get(`${URL}room/${id}`);
         setRoom(response.data);
         if (response.data.roomCategoryId?.price) {
           calculateTotalPrice(
@@ -91,7 +89,7 @@ const Booking = () => {
   
     try {
       // Check if the room is available
-      const availabilityResponse = await axios.post("http://localhost:3001/reAvailableRoom", {
+      const availabilityResponse = await axios.post(`${URL}reAvailableRoom`, {
         checkInDate: formData.checkInDate,
         checkOutDate: formData.checkOutDate,
         roomId: formData.roomId,
@@ -101,12 +99,12 @@ const Booking = () => {
         setSuccess(availabilityResponse.data.message);
   
         // Create booking first
-        const bookingResponse = await axios.post("http://localhost:3001/booking", formData);
+        const bookingResponse = await axios.post(`${URL}booking`, formData);
         const bookingId = bookingResponse.data.bookingId;
   
         const stripe = await loadStripe("pk_test_51PkNRDP769pZvV3qcj4JeG7ixz8pLDBwln4uYlPjcDrH0l1gpJhZYi0oAFyZQi32nrvfV4x9SEsELwAB36O7BzTp00Kp4LTRl1");
   
-        const sessionResponse = await axios.post("http://localhost:3001/create-checkout-session", {
+        const sessionResponse = await axios.post(`${URL}create-checkout-session`, {
           bookingId: bookingId
         });
   
@@ -137,7 +135,7 @@ const Booking = () => {
 
   return (
     <div className="container">
-      <div className="card m-5">
+      <div className="card m-5 ">
         <h2 className="card-header">Booking Room</h2>
         <form className="card-body">
           {error && <div className='alert alert-danger'>{error}</div>}
